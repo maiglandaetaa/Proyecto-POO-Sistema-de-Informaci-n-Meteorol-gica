@@ -7,15 +7,17 @@ import java.util.ArrayList;
 public abstract class Sensor {
     private String codigo, marca, modelo;
     private Estado estado;
+    private EstacionMeteorologica estacion; // Relación con EstacionMeteorologica
     private ArrayList<Medicion> medicionesArraylist; // Guardar multiples mediciones por 0...*
 
     protected Sensor(String codigo, String marca, String modelo, EstacionMeteorologica estacion) {
         this.codigo = codigo;
         this.marca = marca;
         this.modelo = modelo;
+        this.estacion = estacion;
+
         estado = Estado.ACTIVO;
         medicionesArraylist = new ArrayList<>();
-        // estacion.instalaSensor(this);
     }
 
     public String getCodigo() {
