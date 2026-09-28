@@ -11,15 +11,15 @@ public class Comuna {
     }
 
     public int getCodigo(){
-
+        return codigo;
     }
 
     public String getNombre(){
-
+        return nombre;
     }
 
     public void addEstacion(EstacionMeteorologica estacion){
-
+        estaciones.add(estacion);
     }
 
     public EstacionMeteorologica findEstacionById(String codigo){
