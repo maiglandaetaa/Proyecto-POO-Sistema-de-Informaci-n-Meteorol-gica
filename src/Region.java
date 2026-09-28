@@ -1,10 +1,14 @@
+import java.util.ArrayList;
+
 public class Region {
     private int codigo;
     private String nombre;
+    private ArrayList<Comuna> comunas;
 
     public Region(int cod, String nom){
         this.codigo = cod;
         this.nombre = nom;
+        this.comunas = new ArrayList<>();
     }
     public int getCodigo(){
         return codigo;
