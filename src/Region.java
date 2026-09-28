@@ -10,21 +10,31 @@ public class Region {
         this.nombre = nom;
         this.comunas = new ArrayList<>();
     }
+
     public int getCodigo(){
         return codigo;
     }
+
     public String getNombre(){
         return nombre;
     }
-    public boolean addComuna(int cod, String nom){
 
+    public boolean addComuna(int cod, String nom){
+        if(existeComuna(cod, nom)){
+            return false;
+        }
+        Comuna comunaNueva = new Comuna(cod, nom, this);
+        return comunas.add(comunaNueva);
     }
+
     public Comuna findComunaByld(int codigo){
 
     }
+
     public Comuna[] getComunas(){
 
     }
+
     public int getCantidadEstaciones(){
 
     }
