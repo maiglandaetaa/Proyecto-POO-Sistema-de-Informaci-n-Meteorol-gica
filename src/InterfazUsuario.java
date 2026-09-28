@@ -3,7 +3,6 @@ import java.util.Scanner;
 public class InterfazUsuario {
     private Scanner sc = new Scanner(System.in);
 
-
     public static void main(String[] args) {
         System.out.println("Holi :D...");
     }
@@ -24,7 +23,6 @@ public class InterfazUsuario {
 
 
         switch (opcion) {
-            case 1 -> { }
         }
     }
 
@@ -61,36 +59,26 @@ public class InterfazUsuario {
 
     private void menuListados() {
 
-
     }
 
 
     private void listarRegiones() {
-
-
     }
 
 
     private void listarComunas() {
-
-
     }
 
 
     private void listarEstaciones() {
-
-
     }
 
 
     private void listarSensores() {
-
-
     }
 
 
     private void listarMediciones() {
-
 
     }
 
