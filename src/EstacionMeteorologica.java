@@ -1,4 +1,5 @@
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class EstacionMeteorologica {
@@ -76,10 +77,48 @@ public class EstacionMeteorologica {
     }
 
     public String[][] getResumenSensores() {
-        return "";
+        String[][] datos = new String [sensores.size()][7];
+
+        for (int i=0; i<sensores.size(); i++) {
+            Sensor sensor = sensores.get(i);
+
+            datos[i][0] = sensor.getCodigo();
+            datos[i][1] = sensor.getClass().getSimpleName();
+            datos[i][2] = sensor.getMarca();
+            datos[i][3] = sensor.getModelo();
+            datos[i][4] = sensor.getUnidad();
+            datos[i][5] = sensor.getEstado().toString();
+
+            Medicion ultima = sensor.getLastMedicion();
+
+            if (ultima == null) {
+                datos[i][6] = ultima.toString() + " " + sensor.getUnidad();
+            }
+
+        }
+        return datos;
     }
 
     public String[][] getMedicionesSensorBetween(String codigoSensor, LocalDateTime inicio, LocalDateTime fin) {
-        return "";
+        for (Sensor sensor : sensores) {
+            if (sensor.getCodigo().equals(codigoSensor)) {
+                Medicion[] mediciones = sensor.getMedicionesBetween(inicio, fin);
+
+                String[][] datos = new String[mediciones.length][4];
+
+                DateTimeFormatter fecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                DateTimeFormatter hora = DateTimeFormatter.ofPattern("HH:mm");
+
+                for (int i=0; i< mediciones.length; i++) {
+                    datos[i][0] = mediciones[i].getFechaHora().format(fecha);
+                    datos[i][1] = mediciones[i].getFechaHora().format(hora);
+                    datos[i][2] = String.valueOf(mediciones[i].getValor());
+                    datos[i][3] = sensor.getUnidad();
+                }
+
+                return datos;
+            }
+        }
+        return new String[0][0];
     }
 }
