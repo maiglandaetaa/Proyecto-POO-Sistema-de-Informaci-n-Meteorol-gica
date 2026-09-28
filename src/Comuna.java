@@ -1,3 +1,4 @@
+//Felipe Venegas
 public class Comuna {
     private int codigo;
     private String nombre;
@@ -7,5 +8,33 @@ public class Comuna {
         this.codigo = codigo;
         this.nombre = nombre;
         this.region = region;
+    }
+
+    public int getCodigo(){
+
+    }
+
+    public String getNombre(){
+
+    }
+
+    public void addEstacion(EstacionMeteorologica estacion){
+
+    }
+
+    public EstacionMeteorologica findEstacionById(String codigo){
+
+    }
+
+    public Region getRegion(){
+
+    }
+
+    public int getCantidadEstaciones(){
+
+    }
+
+    public int getCantidadEstacionesActivas(){
+
     }
 }
