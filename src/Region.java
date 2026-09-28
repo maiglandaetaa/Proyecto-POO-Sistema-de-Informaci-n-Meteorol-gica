@@ -27,12 +27,17 @@ public class Region {
         return comunas.add(comunaNueva);
     }
 
-    public Comuna findComunaByld(int codigo){
-
+    public Comuna findComunaById(int codigo){
+        for (Comuna comuna : comunas){
+            if(comuna.getCodigo() == codigo){
+                return comuna;
+            }
+        }
+        return null;
     }
 
     public Comuna[] getComunas(){
-
+        return comunas.toArray(new Comuna[0]);
     }
 
     public int getCantidadEstaciones(){
