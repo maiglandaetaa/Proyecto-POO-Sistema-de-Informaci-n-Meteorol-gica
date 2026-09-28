@@ -1,3 +1,4 @@
+//Felipe Venegas
 import java.util.ArrayList;
 
 public class Region {
@@ -41,7 +42,11 @@ public class Region {
     }
 
     public int getCantidadEstaciones(){
-
+        int total =0;
+        for(Comuna comuna : comunas){
+            total+=comuna.getCantidadEstaciones();
+        }
+        return total;
     }
 
     private boolean existeComuna(int cod, String nom){
@@ -52,8 +57,4 @@ public class Region {
         }
         return false;
     }
-
-
-
-
 }
