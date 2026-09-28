@@ -59,9 +59,9 @@ public class InstitutoMeteorologia {
     public boolean instalaSensor(String cod, String modelo, String marca, TipoSensor tipo, String codigoEstacion) {
         for (EstacionMeteorologica estacion : estaciones) {
             String codigoEstacionActual = estacion.toString().split(";")[0];
-
+            //permite crear el sensor si es que existe la estacion :)
             if (codigoEstacionActual.equals(codigoEstacion)) {
-                return estacion.instalaSensor(cod, modelo, marca, tipo, codigoEstacion);
+                return estacion.instalaSensor(cod, modelo, marca, tipo);
             }
         }
         return false;
