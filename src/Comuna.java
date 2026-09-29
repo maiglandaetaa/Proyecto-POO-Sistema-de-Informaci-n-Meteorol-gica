@@ -27,7 +27,8 @@ public class Comuna {
 
     public EstacionMeteorologica findEstacionById(String codigo){
         for(EstacionMeteorologica estacion : estaciones){
-            if(estacion.getCodigo().equals(codigo)){
+            String codigoEstacion = estacion.toString().split(";")[0].trim();
+            if(codigoEstacion.equals(codigo)){
                 return estacion;
             }
         }
@@ -44,12 +45,12 @@ public class Comuna {
     }
 
     public int getCantidadEstacionesActivas(){
-        int EstActivas = 0;
+        int CantEstActivas = 0;
         for(EstacionMeteorologica estacion : estaciones){
-            if (estacion.getEstado() == Estado.ACTIVO){
-                EstActivas++;
+            if (estacion.toString().split(";")[3].trim().equals("ACTIVO")){
+                CantEstActivas++;
             }
         }
-        return EstActivas;
+        return CantEstActivas;
     }
 }
