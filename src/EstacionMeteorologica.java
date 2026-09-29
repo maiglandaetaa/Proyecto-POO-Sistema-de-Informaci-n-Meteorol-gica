@@ -9,7 +9,8 @@ public class EstacionMeteorologica {
     private float latitud;
     private float altitud;
     private Estado estado;
-
+    //atributo extra
+    private Comuna comuna;
     private ArrayList<Sensor> sensores;
 
     public EstacionMeteorologica(String cod, String nombre, float lon, float lat, float alt, Comuna comuna) {
@@ -21,6 +22,8 @@ public class EstacionMeteorologica {
         //atributo extra
         estado = Estado.ACTIVO; //queda con un estado activo al crearlo
         sensores = new ArrayList<>();
+        this.comuna = comuna;
+        comuna.addEstacion(this);
     }
 
     public boolean instalaSensor(String codigo, String modelo, String marca, TipoSensor tipo) {
