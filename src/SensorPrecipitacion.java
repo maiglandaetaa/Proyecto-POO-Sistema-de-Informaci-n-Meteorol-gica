@@ -1,3 +1,4 @@
+// Marcela Landaeta
 public class SensorPrecipitacion extends Sensor {
 
     public SensorPrecipitacion(String codigo, String marca, String modelo, EstacionMeteorologica estacion) {

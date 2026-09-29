@@ -1,3 +1,4 @@
+// Marcela Landaeta
 public class SensorViento extends Sensor {
 
     public SensorViento(String codigo, String marca, String modelo, EstacionMeteorologica estacion) {
