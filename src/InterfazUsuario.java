@@ -1,3 +1,5 @@
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class InterfazUsuario {
@@ -5,36 +7,56 @@ public class InterfazUsuario {
     private InstitutoMeteorologia instituto;
 
     public static void main(String[] args) {
-        System.out.println("Holi :D...");
+        InterfazUsuario interfaz = new InterfazUsuario();
+        interfaz.menuPrincipal();
     }
 
 
     private void menuPrincipal() {
         instituto = new InstitutoMeteorologia();
 
-        System.out.println("SYSTEMA DE INFORMACIÓN METEOROLÓGICA");
-        System.out.println("_____________________________________________");
-        System.out.println("\n1. Crear región");
-        System.out.println("2. Crear comuna");
-        System.out.println("3. Crear estación");
-        System.out.println("4. Instalar sensor");
-        System.out.println("5. Registrar medición");
-        System.out.println("6. Generar listados");
-        System.out.println("7. Salir");
-        System.out.print("Opción: ");
-        int opcion = sc.nextInt();
+        int opcion;
+        do {
+            System.out.println("SYSTEMA DE INFORMACIÓN METEOROLÓGICA");
+            System.out.println("_____________________________________________");
+            System.out.println("1. Crear región");
+            System.out.println("2. Crear comuna");
+            System.out.println("3. Crear estación");
+            System.out.println("4. Instalar sensor");
+            System.out.println("5. Registrar medición");
+            System.out.println("6. Generar listados");
+            System.out.println("7. Salir");
+            System.out.print("Opción: ");
+            opcion = sc.nextInt();
 
 
-        switch (opcion) {
-            case 1 -> {crearRegion();}
-            case 2 -> {crearComuna();}
-            case 3 -> {crearEstacionMeteorologica();}
-            case 4 -> {instalarSensor();}
-            case 5 -> {registrarMedicion();}
-            case 6 -> {menuListados();}
-            case 7 -> {System.out.println("Saliendo...");}
-            default -> {System.out.println("Opción no válida, intentelo de nuevo.");}
-        }
+            switch (opcion) {
+                case 1 -> {
+                    crearRegion();
+                }
+                case 2 -> {
+                    crearComuna();
+                }
+                case 3 -> {
+                    crearEstacionMeteorologica();
+                }
+                case 4 -> {
+                    instalarSensor();
+                }
+                case 5 -> {
+                    registrarMedicion();
+                }
+                case 6 -> {
+                    menuListados();
+                }
+                case 7 -> {
+                    System.out.println("Saliendo...");
+                }
+                default -> {
+                    System.out.println("Opción no válida, intentelo de nuevo.");
+                }
+            }
+        } while (opcion != 7);
     }
 
 
@@ -152,19 +174,40 @@ public class InterfazUsuario {
 
 
     private void registrarMedicion() {
+        System.out.print("Ingrese código de la estación: ");
+        String codEstacion = sc.next();
 
+        System.out.print("Ingrese código del sensor: ");
+        String codSensor = sc.next();
 
+        System.out.print("Ingrese fecha y hora(dd/MM/yyyy HH:mm): ");
+        String fechaHoraTexto = sc.next() + " " + sc.next();
+
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        LocalDateTime fechaHora = LocalDateTime.parse(fechaHoraTexto, formato);
+
+        System.out.print("Ingrese valor de la medición: ");
+        float valor = sc.nextFloat();
+
+        boolean resultado = instituto.registraMedicion(fechaHora, valor, codEstacion, codSensor);
+
+        if (resultado) {
+            System.out.println("Medición registrada con éxito.");
+        } else {
+            System.out.println("No se pudo registrar la medición, inténtelo de nuevo.");
+        }
     }
 
 
     private void menuListados() {
-        System.out.println("-------MENÚ-------");
+        System.out.println("-------MENÚ LISTADOS-------");
         System.out.println("1. Listar regiones");
         System.out.println("2. Listar comunas");
         System.out.println("3. Listar estaciones");
         System.out.println("4. Listar sensores");
         System.out.println("5. Listar mediciones");
-        System.out.print("6. Salir");
+        System.out.println("6. Salir");
+        System.out.print("Opción: ");
         int opcion2 = sc.nextInt();
 
         switch (opcion2) {
@@ -180,28 +223,120 @@ public class InterfazUsuario {
 
 
     private void listarRegiones() {
-        instituto.listaRegiones();
+        String[][] regiones = instituto.listaRegiones(); //matriz con datos de las regiones
+
+        System.out.println("\nREGIONES");
+        System.out.println("-------------------------------------------------------------------------------------");
+        System.out.printf("%-20s %-25s %-25s %-25s%n", "Código", "Nombre", "Comunas", "Estaciones");
+        System.out.println("-------------------------------------------------------------------------------------");
+
+        if (regiones.length ==0) {
+            System.out.println("No existen regiones registradas.");
+            return;
+        }
+
+        for (String[] region : regiones) {
+            System.out.printf("%-20s %-25s %-25s %-25s%n", region[0], region[1], region[2], region[3]);
+        }
     }
 
 
     private void listarComunas() {
-        instituto.listaComunas();
+        String[][] comunas = instituto.listaComunas();
+
+        System.out.println("\nCOMUNAS");
+        System.out.println("-------------------------------------------------------------------------------------");
+        System.out.printf("%-20s %-25s %-25s %-25s%n", "Código", "Nombre", "Estaciones", "Estaciones activas");
+        System.out.println("-------------------------------------------------------------------------------------");
+
+        if (comunas.length == 0) {
+            System.out.println("No existen comunas registradas");
+        }
+
+        for (String[] comuna : comunas) {
+            System.out.printf("%-20s %-25s %-25s %-25s%n", comuna[0], comuna[1], comuna[2], comuna[3]);
+        }
+
     }
 
 
     private void listarEstaciones() {
-        instituto.listaEstaciones();
+        System.out.print("Ingrese código de la región: ");
+        int codigoRegion = sc.nextInt();
+
+        System.out.print("Ingrese código de la comuna: ");
+        int codigoComuna = sc.nextInt();
+
+        String[][] estaciones = instituto.listaEstaciones(codigoRegion, codigoComuna);
+
+        System.out.println("\nESTACIONES METEOROLÓGICAS");
+        System.out.println("-------------------------------------------------------------------------------------");
+        System.out.printf("%-20s %-25s %-25s %-25s%n", "Código", "Nombre y ubicación", "Estado", "Sensores");
+        System.out.println("-------------------------------------------------------------------------------------");
+
+        if (estaciones.length == 0) {
+            System.out.println("No existen estaciones registradas para la región y comuna ingresadas.");
+        }
+
+        for (String[] estacion : estaciones) {
+            System.out.printf("%-20s %-25s %-25s %-25s%n", estacion[0], estacion[1], estacion[2], estacion[3]);
+        }
     }
 
 
     private void listarSensores() {
-        instituto.listaSensores();
+        System.out.print("Ingrese código de la estación: ");
+        String codigoEstacion = sc.next();
+
+        String[][] sensores = instituto.listaSensores(codigoEstacion);
+
+        System.out.println("\nREGIONES");
+        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.printf("%-15s %-20s %-20s %-20s %-20s %-20s %-20s%n", "Código", "Tipo", "Marca", "Modelo", "Unidad", "Estado", "Última medición");
+        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
+
+        if (sensores.length == 0) {
+            System.out.println("No existen sensores registrados en la estación.");
+            return;
+        }
+
+        for (String[] sensor : sensores) {
+            System.out.printf("%-15s %-20s %-20s %-20s %-20s %-20s %-20s%n", sensor[0], sensor[1], sensor[2], sensor[3], sensor[4], sensor[5], sensor[6]);
+        }
     }
 
 
     private void listarMediciones() {
-        instituto.listaMediciones();
+        System.out.print("Ingrese código de la estación: ");
+        String codEstacion = sc.next();
 
+        System.out.print("Ingrese código del sensor: ");
+        String codSensor = sc.next();
+
+        System.out.print("Ingrese fecha y hora de inicio (dd/MM/yyyy HH:mm): ");
+        String inicioTexto = sc.next() + " " + sc.next();
+
+        System.out.print("Ingrese feha y hora de fin (dd//MM/yyyy HH:mm): ");
+        String finTexto = sc.next() + " " + sc.next();
+
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+        LocalDateTime inicio = LocalDateTime.parse(inicioTexto, formato);
+        LocalDateTime fin = LocalDateTime.parse(finTexto, formato);
+
+        String[][] mediciones = instituto.listaMediciones(codEstacion, codSensor, inicio, fin);
+
+        System.out.println("\nMEDICIONES");
+        System.out.println("-------------------------------------------------------------------------------------");
+        System.out.printf("%-20s %-25s %-25s %-25s%n", "Fecha", "Hora", "Valor", "Unidad");
+        System.out.println("-------------------------------------------------------------------------------------");
+
+        if (mediciones.length == 0) {
+            System.out.println("No existen mediciones para los datos ingresados.");
+        }
+
+        for (String[] medicion : mediciones) {
+            System.out.printf("%-20s %-25s %-25s %-25s%n", medicion[0], medicion[1], medicion[2], medicion[3]);
+        }
     }
-
 }

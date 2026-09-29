@@ -68,26 +68,96 @@ public class InstitutoMeteorologia {
     }
 
     public boolean registraMedicion(LocalDateTime fechaHora, float valor, String codEstacion, String codSensor) {
+
+        for (EstacionMeteorologica estacion : estaciones) {
+            String codigoEstacion = estacion.toString().split(";")[0];
+            if (codigoEstacion.equals(codEstacion)) {
+                return estacion.registraMedicion(fechaHora, valor, codSensor);
+            }
+        }
         return false;
     }
 
     public String[][] listaRegiones() {
-        return "";
+        String[][] resultado = new String[regiones.size()][4];
+        int i=0;
+
+        for (Region region : regiones) { //por cada region devuelve:
+            resultado[i][0] = String.valueOf(region.getCodigo()); //cod
+            resultado[i][1] = region.getNombre();//nombre
+            resultado[i][2] = String.valueOf(region.getComunas().length);//comunas
+            resultado[i][3] = String.valueOf(region.getCantidadEstaciones());//cantidad de estaciones
+
+            i++;
+        }
+        return resultado;
     }
 
     public String[][] listaComunas() {
-        return"";
+        ArrayList<String[]> resultado = new ArrayList<>();
+
+        for (Region region : regiones) {
+            for (Comuna comuna : region.getComunas()) {
+                String[] datos = new String[4];
+
+                datos[0] = String.valueOf(comuna.getCodigo());
+                datos[1] = String.valueOf(comuna.getNombre());
+                datos[2] = String.valueOf(comuna.getCantidadEstaciones());
+                datos[3] = String.valueOf(comuna.getCantidadEstacionesActivas());
+
+                resultado.add(datos);
+            }
+        }
+        return resultado.toArray(new String[0][]);
     }
 
     public String[][] listaEstaciones(int codigoRegion, int codigoComuna) {
-        return "";
+        for (Region region : regiones) {
+            if (region.getCodigo() == codigoRegion) {
+                Comuna comuna = region.findComunaById(codigoComuna);
+
+                if (comuna == null) {
+                    return new String[0][0];
+                }
+
+                ArrayList<String[]> resultado = new ArrayList<>();
+
+                for (EstacionMeteorologica estacion : estaciones) {
+                    String[] datos = estacion.toString().split("; ");
+                    String codigoEstacion = datos[0];
+
+                    EstacionMeteorologica encontrada = comuna.findEstacionById(codigoEstacion);
+
+                    if (encontrada != null) {
+                        resultado.add(datos);
+                    }
+                }
+                return resultado.toArray(new String[0][]);
+            }
+        }
+        return new String[0][0];
     }
 
     public String[][] listaSensores(String codigoEstacion) {
-        return"";
+        for (EstacionMeteorologica estacion : estaciones) {
+            String codigoEstacionActual = estacion.toString().split(";")[0];
+
+            if (codigoEstacionActual.equals(codigoEstacion)) {
+                return estacion.getResumenSensores();
+            }
+        }
+        return new String[0][0];
     }
 
     public String [][] listaMediciones(String codEstacion, String codSensor, LocalDateTime inicio, LocalDateTime fin) {
-        return "";
+        for (EstacionMeteorologica estacion: estaciones) {
+            String codigoEstacionActual = estacion.toString().split(";")[0];
+
+            if (codigoEstacionActual.equals(codEstacion)) {
+                return estacion.getMedicionesSensorBetween(codSensor, inicio, fin);
+            }
+        }
+
+        return new String[0][0];
     }
 }

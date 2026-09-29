@@ -71,6 +71,15 @@ public class EstacionMeteorologica {
     }
 
     public boolean registraMedicion(LocalDateTime fechaHora, float valor, String codigoSensor) {
+        if (estado != Estado.ACTIVO) {
+            return false;
+        }
+
+        for (Sensor sensor : sensores) {
+            if (sensor.getCodigo().equals(codigoSensor)) {
+                return sensor.addMedicion(fechaHora, valor);
+            }
+        }
         return false;
     }
 
@@ -95,6 +104,8 @@ public class EstacionMeteorologica {
             Medicion ultima = sensor.getLastMedicion();
 
             if (ultima == null) {
+                datos[i][6] = "Sin mediciones.";
+            } else {
                 datos[i][6] = ultima.toString() + " " + sensor.getUnidad();
             }
 
