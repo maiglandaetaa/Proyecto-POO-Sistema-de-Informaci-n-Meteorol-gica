@@ -1,4 +1,5 @@
 //Felipe Venegas
+import java.util.ArrayList;
 public class Comuna {
     private int codigo;
     private String nombre;
@@ -29,8 +30,8 @@ public class Comuna {
             if(estacion.getCodigo().equals(codigo)){
                 return estacion;
             }
-            return null;
         }
+        return null;
     }
 
     public Region getRegion(){
@@ -43,6 +44,12 @@ public class Comuna {
     }
 
     public int getCantidadEstacionesActivas(){
-
+        int EstActivas = 0;
+        for(EstacionMeteorologica estacion : estaciones){
+            if (estacion.getEstado() == Estado.ACTIVO){
+                EstActivas++;
+            }
+        }
+        return EstActivas;
     }
 }
