@@ -1,3 +1,3 @@
 # Proyecto-POO-Sistema-de-Información-Meteorológica
-Grupo: Windows$
+Grupo: Windows$  
 Integrantes: Fernanda López, Marcela Landaeta y Felipe Venegas
