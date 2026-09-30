@@ -18,12 +18,13 @@ public class InstitutoMeteorologia {
 
     public boolean creaComuna(int codigo, String nombre, int codigoRegion) {
         for (Region region : regiones) { //busca codigo en las regiones que coincida
+            // Marce: Se podían añadir comunas duplicadas porque la creaba antes de verificar
             if (region.getCodigo() == codigoRegion) { //si la encuentra crea la comuna:
                 Comuna comuna = new Comuna(codigo, nombre, region);
-                //y aqui se agrega :)
+                /* //y aqui se agrega :)
                 region.addComuna(comuna.getCodigo(), comuna.getNombre());
-                //y devolvemos true obviouslyy
-                return true;
+                //y devolvemos true obviouslyy */
+                return region.addComuna(comuna.getCodigo(), comuna.getNombre());
             }
         }
         return false;
@@ -98,13 +99,14 @@ public class InstitutoMeteorologia {
 
         for (Region region : regiones) {
             for (Comuna comuna : region.getComunas()) {
-                String[] datos = new String[4];
+                String[] datos = new String[5];
 
                 datos[0] = String.valueOf(comuna.getCodigo());
                 datos[1] = String.valueOf(comuna.getNombre());
                 datos[2] = String.valueOf(comuna.getCantidadEstaciones());
                 datos[3] = String.valueOf(comuna.getCantidadEstacionesActivas());
-
+                datos[4] = String.valueOf(comuna.getNombre());
+                // Marce: Faltaba región ^^^
                 resultado.add(datos);
             }
         }
@@ -127,7 +129,7 @@ public class InstitutoMeteorologia {
                     String codigoEstacion = datos[0];
 
                     EstacionMeteorologica encontrada = comuna.findEstacionById(codigoEstacion);
-
+                    // Marce: No indica sensores activos, no lo supe solucionar
                     if (encontrada != null) {
                         resultado.add(datos);
                     }

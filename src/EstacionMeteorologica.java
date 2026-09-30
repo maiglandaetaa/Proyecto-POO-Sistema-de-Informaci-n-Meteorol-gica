@@ -26,7 +26,7 @@ public class EstacionMeteorologica {
         comuna.addEstacion(this);
     }
 
-    public boolean instalaSensor(String codigo, String modelo, String marca, TipoSensor tipo) {
+    public boolean instalaSensor(String codigo, String marca, String modelo, TipoSensor tipo) {
         //CONDICIONES PARA INSTALAR SENSOR
 
         //No se creara si no se encuentra activo
@@ -40,25 +40,28 @@ public class EstacionMeteorologica {
                 return false;
             }
 
+            /* Marce: Se deben cumplir ambas condiciones para no añadirlo -> ||xx , &&oo
+                Si el tipo del nuevo sensor es X, y el sensor revisado ya es X, no crear */
             //No lo crea si ya hay un sensor activo del mismo tipo
             if (sensor.getEstado() == Estado.ACTIVO) {
-                if (tipo == TipoSensor.HUMEDAD || sensor instanceof SensorHumedad) {
+                if (tipo == TipoSensor.HUMEDAD && sensor instanceof SensorHumedad) {
                     return false;
                 }
-                if (tipo == TipoSensor.TEMPERATURA || sensor instanceof SensorTemperatura) {
+                if (tipo == TipoSensor.TEMPERATURA && sensor instanceof SensorTemperatura) {
                     return false;
                 }
-                if (tipo == TipoSensor.PRESION || sensor instanceof SensorPresion) {
+                if (tipo == TipoSensor.PRESION && sensor instanceof SensorPresion) {
                     return false;
                 }
-                if (tipo == TipoSensor.VIENTO || sensor instanceof SensorViento) {
+                if (tipo == TipoSensor.VIENTO && sensor instanceof SensorViento) {
                     return false;
                 }
-                if (tipo == TipoSensor.PRECIPITACION || sensor instanceof SensorPrecipitacion) {
+                if (tipo == TipoSensor.PRECIPITACION && sensor instanceof SensorPrecipitacion) {
                     return false;
                 }
             }
         }
+        // Marce: Faltaba crear el sensor -> sensores.add(sensor);
         Sensor sensor = null;
         switch (tipo) {                                                             //this pk ya estamos en la estacion xd
             case HUMEDAD -> {sensor = new SensorHumedad(codigo, marca, modelo,this);}
@@ -67,6 +70,7 @@ public class EstacionMeteorologica {
             case VIENTO -> {sensor = new SensorViento(codigo, marca, modelo, this);}
             case PRECIPITACION -> {sensor = new SensorPrecipitacion(codigo, marca, modelo, this);}
         }
+        sensores.add(sensor);
         return true;
     }
 
@@ -84,7 +88,7 @@ public class EstacionMeteorologica {
     }
 
     public String toString () {
-        return codigo + "; " + nombre + ": (" + longitud + ", " + latitud + ", " +
+        return codigo + "; " + nombre + "; (" + longitud + ", " + latitud + ", " +
                 altitud + "); " + estado + "; " + sensores.size();
     }
 

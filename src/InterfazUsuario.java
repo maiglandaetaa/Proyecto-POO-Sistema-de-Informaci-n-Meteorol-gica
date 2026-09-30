@@ -17,11 +17,11 @@ public class InterfazUsuario {
 
         int opcion;
         do {
-            System.out.println("SYSTEMA DE INFORMACIÓN METEOROLÓGICA");
-            System.out.println("_____________________________________________");
+            System.out.println("\n    SISTEMA DE INFORMACIÓN METEOROLÓGICA");
+            System.out.println("____________________________________________");
             System.out.println("1. Crear región");
             System.out.println("2. Crear comuna");
-            System.out.println("3. Crear estación");
+            System.out.println("3. Crear estación meteorológica");
             System.out.println("4. Instalar sensor");
             System.out.println("5. Registrar medición");
             System.out.println("6. Generar listados");
@@ -61,10 +61,10 @@ public class InterfazUsuario {
 
 
     private void crearRegion() {
-        System.out.print("Ingrese código de la región: ");
+        System.out.print("Código de la región: ");
         int codigo = sc.nextInt();
 
-        System.out.print("Ingrese nombre de la región: ");
+        System.out.print("Nombre de la región: ");
         String nombre = sc.next();
 
         boolean creada = instituto.creaRegion(codigo, nombre);
@@ -78,13 +78,13 @@ public class InterfazUsuario {
 
 
     private void crearComuna() {
-        System.out.print("Ingrese código de la comuna: ");
+        System.out.print("Código de la comuna: ");
         int codigo = sc.nextInt();
 
-        System.out.print("Ingrese nombre de la comuna: ");
+        System.out.print("Nombre de la comuna: ");
         String nombre = sc.next();
 
-        System.out.print("Ingrese código de la región de la comuna: ");
+        System.out.print("Código de la región: ");
         int codigoRegion = sc.nextInt();
 
         boolean resultado = instituto.creaComuna(codigo, nombre, codigoRegion);
@@ -99,10 +99,10 @@ public class InterfazUsuario {
 
 
     private void crearEstacionMeteorologica() {
-        System.out.print("Ingrese código de la estación: ");
+        System.out.print("Código de la estación: ");
         String cod = sc.next();
 
-        System.out.print("Ingrese nombre de la estación: ");
+        System.out.print("Nombre de la estación: ");
         String nombre = sc.next();
 
         System.out.print("Ingrese longitud: ");
@@ -114,10 +114,10 @@ public class InterfazUsuario {
         System.out.print("Ingrese altitud: ");
         float alt = sc.nextFloat();
 
-        System.out.print("Ingrese código de la región en la que se encuentra la estación: ");
+        System.out.print("Código de la región perteneciente: ");
         int codRegion = sc.nextInt();
 
-        System.out.print("Ingrese código de la comuna en la que se encuentra la estación: ");
+        System.out.print("Ingrese código de la comuna perteneciente: ");
         int codComuna = sc.nextInt();
 
         boolean creada = instituto.creaEstacion(cod, nombre, lon, lat, alt, codRegion, codComuna);
@@ -132,10 +132,10 @@ public class InterfazUsuario {
 
 
     private void instalarSensor() {
-        System.out.print("Ingrese código de la estación: ");
+        System.out.print("Código de la estación: ");
         String codEstacion = sc.next();
 
-        System.out.print("Ingrese código: ");
+        System.out.print("Ingrese código sensor: ");
         String cod = sc.next();
 
         System.out.print("Ingrese marca: ");
@@ -144,12 +144,13 @@ public class InterfazUsuario {
         System.out.print("Ingrese modelo: ");
         String modelo = sc.next();
 
-        System.out.print("Ingrese tipo de sensor: ");
+        System.out.println("Ingrese tipo de sensor: ");
         System.out.println("1. Humedad");
         System.out.println("2. Temperatura");
         System.out.println("3. Presion");
         System.out.println("4. Viento");
         System.out.println("5. Precipitación");
+        System.out.print("Seleccione: ");
         int tipo = sc.nextInt();
 
         TipoSensor sensor;
@@ -160,7 +161,7 @@ public class InterfazUsuario {
             case 3 -> {sensor = TipoSensor.PRESION;}
             case 4 -> {sensor = TipoSensor.VIENTO;}
             case 5 -> {sensor = TipoSensor.PRECIPITACION;}
-            default -> {sensor = null;}
+            default -> {System.out.println("Tipo inválido."); return;}
         }
 
         boolean resultado = instituto.instalaSensor(cod, modelo, marca, sensor, codEstacion);
@@ -174,13 +175,13 @@ public class InterfazUsuario {
 
 
     private void registrarMedicion() {
-        System.out.print("Ingrese código de la estación: ");
+        System.out.print("Código de la estación: ");
         String codEstacion = sc.next();
 
-        System.out.print("Ingrese código del sensor: ");
+        System.out.print("Código del sensor: ");
         String codSensor = sc.next();
 
-        System.out.print("Ingrese fecha y hora(dd/MM/yyyy HH:mm): ");
+        System.out.print("Ingrese fecha y hora (dd/MM/yyyy HH:mm): ");
         String fechaHoraTexto = sc.next() + " " + sc.next();
 
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -200,40 +201,43 @@ public class InterfazUsuario {
 
 
     private void menuListados() {
-        System.out.println("-------MENÚ LISTADOS-------");
-        System.out.println("1. Listar regiones");
-        System.out.println("2. Listar comunas");
-        System.out.println("3. Listar estaciones");
-        System.out.println("4. Listar sensores");
-        System.out.println("5. Listar mediciones");
-        System.out.println("6. Salir");
-        System.out.print("Opción: ");
-        int opcion2 = sc.nextInt();
+        int opcion2;
+        do {
+            System.out.println("\n-------MENÚ LISTADOS-------");
+            System.out.println("1. Listar regiones");
+            System.out.println("2. Listar comunas");
+            System.out.println("3. Listar estaciones");
+            System.out.println("4. Listar sensores");
+            System.out.println("5. Listar mediciones");
+            System.out.println("6. Salir");
+            System.out.print("Opción: ");
+            opcion2 = sc.nextInt();
 
-        switch (opcion2) {
-            case 1 -> {listarRegiones();}
-            case 2 -> {listarComunas();}
-            case 3 -> {listarEstaciones();}
-            case 4 -> {listarSensores();}
-            case 5 -> {listarMediciones();}
-            case 6 -> {System.out.println("Saliendo...");}
-            default -> {System.out.println("Opción no válida, inténtelo de nuevo.");}
-        }
+            switch (opcion2) {
+                case 1 -> {listarRegiones();}
+                case 2 -> {listarComunas();}
+                case 3 -> {listarEstaciones();}
+                case 4 -> {listarSensores();}
+                case 5 -> {listarMediciones();}
+                case 6 -> {System.out.println("Saliendo...");}
+                default -> {System.out.println("Opción no válida, inténtelo de nuevo.");}
+            }
+        } while (opcion2 != 6);
     }
 
 
     private void listarRegiones() {
         String[][] regiones = instituto.listaRegiones(); //matriz con datos de las regiones
 
-        System.out.println("\nREGIONES");
-        System.out.println("-------------------------------------------------------------------------------------");
-        System.out.printf("%-20s %-25s %-25s %-25s%n", "Código", "Nombre", "Comunas", "Estaciones");
-        System.out.println("-------------------------------------------------------------------------------------");
-
         if (regiones.length ==0) {
             System.out.println("No existen regiones registradas.");
             return;
         }
+
+        System.out.println("\nREGIONES");
+        System.out.println("-------------------------------------------------------------------------------------");
+        System.out.printf("%-20s %-25s %-25s %-25s%n", "Código", "Nombre", "Comunas", "Estaciones");
+        System.out.println("-------------------------------------------------------------------------------------");
 
         for (String[] region : regiones) {
             System.out.printf("%-20s %-25s %-25s %-25s%n", region[0], region[1], region[2], region[3]);
@@ -243,18 +247,18 @@ public class InterfazUsuario {
 
     private void listarComunas() {
         String[][] comunas = instituto.listaComunas();
-
-        System.out.println("\nCOMUNAS");
-        System.out.println("-------------------------------------------------------------------------------------");
-        System.out.printf("%-20s %-25s %-25s %-25s%n", "Código", "Nombre", "Estaciones", "Estaciones activas");
-        System.out.println("-------------------------------------------------------------------------------------");
-
         if (comunas.length == 0) {
             System.out.println("No existen comunas registradas");
         }
 
+        // Marce: Faltaba región
+        System.out.println("\nCOMUNAS");
+        System.out.println("---------------------------------------------------------------------------------------------------------------");
+        System.out.printf("%-20s %-25s %-25s %-25s %-25s%n", "Código", "Nombre", "Estaciones", "Estaciones activas", "Región");
+        System.out.println("---------------------------------------------------------------------------------------------------------------");
+
         for (String[] comuna : comunas) {
-            System.out.printf("%-20s %-25s %-25s %-25s%n", comuna[0], comuna[1], comuna[2], comuna[3]);
+            System.out.printf("%-20s %-25s %-25s %-25s %-25s%n", comuna[0], comuna[1], comuna[2], comuna[3], comuna[4]);
         }
 
     }
@@ -269,14 +273,14 @@ public class InterfazUsuario {
 
         String[][] estaciones = instituto.listaEstaciones(codigoRegion, codigoComuna);
 
+        if (estaciones.length == 0) {
+            System.out.println("No existen estaciones registradas para la región y comuna ingresadas.");
+        }
+
         System.out.println("\nESTACIONES METEOROLÓGICAS");
         System.out.println("-------------------------------------------------------------------------------------");
         System.out.printf("%-20s %-25s %-25s %-25s%n", "Código", "Nombre y ubicación", "Estado", "Sensores");
         System.out.println("-------------------------------------------------------------------------------------");
-
-        if (estaciones.length == 0) {
-            System.out.println("No existen estaciones registradas para la región y comuna ingresadas.");
-        }
 
         for (String[] estacion : estaciones) {
             System.out.printf("%-20s %-25s %-25s %-25s%n", estacion[0], estacion[1], estacion[2], estacion[3]);
@@ -290,15 +294,15 @@ public class InterfazUsuario {
 
         String[][] sensores = instituto.listaSensores(codigoEstacion);
 
-        System.out.println("\nREGIONES");
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.printf("%-15s %-20s %-20s %-20s %-20s %-20s %-20s%n", "Código", "Tipo", "Marca", "Modelo", "Unidad", "Estado", "Última medición");
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
-
         if (sensores.length == 0) {
             System.out.println("No existen sensores registrados en la estación.");
             return;
         }
+
+        System.out.println("\nSENSORES");
+        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.printf("%-15s %-20s %-20s %-20s %-20s %-20s %-20s%n", "Código", "Tipo", "Marca", "Modelo", "Unidad", "Estado", "Última medición");
+        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
 
         for (String[] sensor : sensores) {
             System.out.printf("%-15s %-20s %-20s %-20s %-20s %-20s %-20s%n", sensor[0], sensor[1], sensor[2], sensor[3], sensor[4], sensor[5], sensor[6]);
@@ -326,14 +330,14 @@ public class InterfazUsuario {
 
         String[][] mediciones = instituto.listaMediciones(codEstacion, codSensor, inicio, fin);
 
+        if (mediciones.length == 0) {
+            System.out.println("No existen mediciones para los datos ingresados.");
+        }
+
         System.out.println("\nMEDICIONES");
         System.out.println("-------------------------------------------------------------------------------------");
         System.out.printf("%-20s %-25s %-25s %-25s%n", "Fecha", "Hora", "Valor", "Unidad");
         System.out.println("-------------------------------------------------------------------------------------");
-
-        if (mediciones.length == 0) {
-            System.out.println("No existen mediciones para los datos ingresados.");
-        }
 
         for (String[] medicion : mediciones) {
             System.out.printf("%-20s %-25s %-25s %-25s%n", medicion[0], medicion[1], medicion[2], medicion[3]);
