@@ -105,7 +105,7 @@ public class InstitutoMeteorologia {
                 datos[1] = String.valueOf(comuna.getNombre());
                 datos[2] = String.valueOf(comuna.getCantidadEstaciones());
                 datos[3] = String.valueOf(comuna.getCantidadEstacionesActivas());
-                datos[4] = String.valueOf(comuna.getNombre());
+                datos[4] = String.valueOf(region.getNombre());
                 // Marce: Faltaba región ^^^
                 resultado.add(datos);
             }
