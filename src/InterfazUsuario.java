@@ -164,7 +164,7 @@ public class InterfazUsuario {
             default -> {System.out.println("Tipo inválido."); return;}
         }
 
-        boolean resultado = instituto.instalaSensor(cod, modelo, marca, sensor, codEstacion);
+        boolean resultado = instituto.instalaSensor(cod, marca, modelo, sensor, codEstacion);
 
         if (resultado) {
             System.out.println("Sensor instalado con éxito.");
