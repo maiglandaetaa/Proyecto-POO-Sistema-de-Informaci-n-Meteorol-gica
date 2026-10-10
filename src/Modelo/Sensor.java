@@ -1,4 +1,5 @@
-// Marcela Landaeta
+package Modelo;// Marcela Landaeta
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 public abstract class Sensor {
     private String codigo, marca, modelo;
     private Estado estado;
-    private EstacionMeteorologica estacion; // Relación con EstacionMeteorologica
+    private EstacionMeteorologica estacion; // Relación con Modelo.EstacionMeteorologica
     private ArrayList<Medicion> medicionesArraylist; // Guardar multiples mediciones por 0...*
 
     protected Sensor(String codigo, String marca, String modelo, EstacionMeteorologica estacion) {

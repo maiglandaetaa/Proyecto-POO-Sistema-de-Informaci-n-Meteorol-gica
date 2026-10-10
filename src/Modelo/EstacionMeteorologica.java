@@ -1,3 +1,5 @@
+package Modelo;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -64,11 +66,11 @@ public class EstacionMeteorologica {
         // Marce: Faltaba crear el sensor -> sensores.add(sensor);
         Sensor sensor = null;
         switch (tipo) {                                                             //this pk ya estamos en la estacion xd
-            case HUMEDAD -> {sensor = new SensorHumedad(codigo, marca, modelo,this);}
-            case TEMPERATURA -> {sensor = new SensorTemperatura(codigo, marca, modelo, this);}
-            case PRESION -> {sensor = new SensorPresion(codigo, marca, modelo, this);}
-            case VIENTO -> {sensor = new SensorViento(codigo, marca, modelo, this);}
-            case PRECIPITACION -> {sensor = new SensorPrecipitacion(codigo, marca, modelo, this);}
+            case TipoSensor.HUMEDAD -> {sensor = new SensorHumedad(codigo, marca, modelo,this);}
+            case TipoSensor.TEMPERATURA -> {sensor = new SensorTemperatura(codigo, marca, modelo, this);}
+            case TipoSensor.PRESION -> {sensor = new SensorPresion(codigo, marca, modelo, this);}
+            case TipoSensor.VIENTO -> {sensor = new SensorViento(codigo, marca, modelo, this);}
+            case TipoSensor.PRECIPITACION -> {sensor = new SensorPrecipitacion(codigo, marca, modelo, this);}
         }
         sensores.add(sensor);
         return true;

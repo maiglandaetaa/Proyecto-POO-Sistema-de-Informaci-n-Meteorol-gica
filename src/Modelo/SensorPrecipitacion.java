@@ -1,3 +1,5 @@
+package Modelo;
+
 // Marcela Landaeta
 public class SensorPrecipitacion extends Sensor {
 

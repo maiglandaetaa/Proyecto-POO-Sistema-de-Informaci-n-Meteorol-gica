@@ -1,4 +1,4 @@
-// Marcela Landaeta
+package Modelo;// Marcela Landaeta
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;

@@ -1,4 +1,5 @@
-//Felipe Venegas
+package Modelo;//Felipe Venegas
+
 import java.util.ArrayList;
 
 public class Region {

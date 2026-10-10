@@ -1,3 +1,8 @@
+package Vista;
+
+import Controlador.InstitutoMeteorologia;
+import Modelo.TipoSensor;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
@@ -90,7 +95,7 @@ public class InterfazUsuario {
         boolean resultado = instituto.creaComuna(codigo, nombre, codigoRegion);
 
         if (resultado) {
-            System.out.println("Comuna creada con éxito.");
+            System.out.println("Modelo.Comuna creada con éxito.");
         } else {
             System.out.println("No se pudo crear la comuna, inténtelo de nuevo.");
         }
@@ -167,7 +172,7 @@ public class InterfazUsuario {
         boolean resultado = instituto.instalaSensor(cod, marca, modelo, sensor, codEstacion);
 
         if (resultado) {
-            System.out.println("Sensor instalado con éxito.");
+            System.out.println("Modelo.Sensor instalado con éxito.");
         } else {
             System.out.println("No se pudo instalar el sensor, inténtelo de nuevo.");
         }
@@ -279,7 +284,7 @@ public class InterfazUsuario {
 
         System.out.println("\nESTACIONES METEOROLÓGICAS");
         System.out.println("-------------------------------------------------------------------------------------");
-        System.out.printf("%-20s %-25s %-25s %-25s%n", "Código", "Nombre y ubicación", "Estado", "Sensores");
+        System.out.printf("%-20s %-25s %-25s %-25s%n", "Código", "Nombre y ubicación", "Modelo.Estado", "Sensores");
         System.out.println("-------------------------------------------------------------------------------------");
 
         for (String[] estacion : estaciones) {
@@ -301,7 +306,7 @@ public class InterfazUsuario {
 
         System.out.println("\nSENSORES");
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.printf("%-15s %-20s %-20s %-20s %-20s %-20s %-20s%n", "Código", "Tipo", "Marca", "Modelo", "Unidad", "Estado", "Última medición");
+        System.out.printf("%-15s %-20s %-20s %-20s %-20s %-20s %-20s%n", "Código", "Tipo", "Marca", "Modelo", "Unidad", "Modelo.Estado", "Última medición");
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
 
         for (String[] sensor : sensores) {
