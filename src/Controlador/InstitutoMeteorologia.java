@@ -1,6 +1,10 @@
 package Controlador;
 
-import javax.swing.plaf.synth.Region;
+import Modelo.Comuna;
+import Modelo.EstacionMeteorologica;
+import Modelo.Region;
+import Modelo.TipoSensor;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
