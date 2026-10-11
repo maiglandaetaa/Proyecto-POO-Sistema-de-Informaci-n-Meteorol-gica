@@ -6,7 +6,7 @@ import Controlador.MeteorologiaException;
 public class ResumenMediciones {
     private final int cantidad;
     private final float promedio;
-    private final Medicion medicionMinima, medicionMaxima;
+    private final Medicion minima, maxima;
 
     public ResumenMediciones(Medicion[] mediciones) throws MeteorologiaException{
         if (mediciones == null || mediciones.length == 0) {
@@ -14,20 +14,20 @@ public class ResumenMediciones {
         }
         this.cantidad = mediciones.length;
         float suma = 0;
-        Medicion minima = mediciones[0];
-        Medicion maxima = mediciones[0];
+        Medicion menor = mediciones[0];
+        Medicion mayor = mediciones[0];
 
         for (Medicion medicion : mediciones) {
             suma += medicion.getValor();
-            if (medicion.getValor() > maxima.getValor() || (medicion.getValor() == maxima.getValor() && medicion.getFechaHora().isBefore(maxima.getFechaHora()))) {
-                maxima = medicion;
+            if (medicion.getValor() > mayor.getValor() || (medicion.getValor() == mayor.getValor() && medicion.getFechaHora().isBefore(mayor.getFechaHora()))) {
+                mayor = medicion;
             }
-            if (medicion.getValor() < minima.getValor() || (medicion.getValor() == minima.getValor() && medicion.getFechaHora().isBefore(minima.getFechaHora()))) {
-                minima = medicion;
+            if (medicion.getValor() < menor.getValor() || (medicion.getValor() == menor.getValor() && medicion.getFechaHora().isBefore(menor.getFechaHora()))) {
+                menor = medicion;
             }
         }
-        medicionMinima = minima;
-        medicionMaxima = maxima;
+        minima = menor;
+        maxima = mayor;
         this.promedio = suma / cantidad;
     }
 
@@ -40,10 +40,10 @@ public class ResumenMediciones {
     }
 
     public Medicion getMinimo() {
-        return medicionMinima;
+        return minima;
     }
 
     public Medicion getMaximo() {
-        return medicionMaxima;
+        return maxima;
     }
 }
