@@ -81,6 +81,7 @@ public class EstacionMeteorologica {
             return false;
         }
 
+        // Avance 2 Marce: addMedicion cambiado a void y usa exception. Implementar try-catch
         for (Sensor sensor : sensores) {
             if (sensor.getCodigo().equals(codigoSensor)) {
                 return sensor.addMedicion(fechaHora, valor);
@@ -106,7 +107,7 @@ public class EstacionMeteorologica {
             datos[i][3] = sensor.getModelo();
             datos[i][4] = sensor.getUnidad();
             datos[i][5] = sensor.getEstado().toString();
-
+            // Avance 2 Marce: Metodo eliminado, modifique código
             Medicion ultima = sensor.getLastMedicion();
 
             if (ultima == null) {

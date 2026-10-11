@@ -16,4 +16,9 @@ public class SensorHumedad extends Sensor {
     public boolean esValorAdmisible(float valor) {
         return valor >= 0 && valor <= 100;
     }
+
+    @Override
+    public TipoSensor getTipo() {
+        return TipoSensor.HUMEDAD;
+    }
 }

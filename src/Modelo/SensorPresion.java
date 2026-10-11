@@ -16,4 +16,9 @@ public class SensorPresion extends Sensor {
     public boolean esValorAdmisible(float valor) {
         return valor >= 800 && valor <= 1100;
     }
+
+    @Override
+    public TipoSensor getTipo() {
+        return TipoSensor.PRESION;
+    }
 }
