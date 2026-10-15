@@ -9,16 +9,12 @@ import java.util.Scanner;
 
 public class InterfazUsuario {
     private Scanner sc = new Scanner(System.in);
+
+    //con patron singleton, solo crea un instituto :P
+    private static InstitutoMeteorologia instance;
     private InstitutoMeteorologia instituto;
 
-    public static void main(String[] args) {
-        InterfazUsuario interfaz = new InterfazUsuario();
-        interfaz.menuPrincipal();
-    }
-
-
-    private void menuPrincipal() {
-        instituto = new InstitutoMeteorologia();
+    public void menuPrincipal() {
 
         int opcion;
         do {
