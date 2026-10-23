@@ -1,6 +1,9 @@
-package Modelo;//Felipe Venegas
+//Felipe Venegas
+package Modelo;
 
 import java.util.ArrayList;
+import Controlador.MeteorologiaException;
+import java.util.Optional;
 
 public class Region {
     private int codigo;
@@ -21,15 +24,19 @@ public class Region {
         return nombre;
     }
 
-    public boolean addComuna(int cod, String nom){
-        if(existeComuna(cod, nom)){
-            return false;
+    public void addComuna(int cod, String nom) throws MeteorologiaException {
+        if (findComunaById(cod).isPresent()) {
+            throw new MeteorologiaException("La región de " + nombre + " ya tiene una comuna con el código " + cod + ".");
         }
-        Comuna comunaNueva = new Comuna(cod, nom, this);
-        return comunas.add(comunaNueva);
+        for (Comuna comuna : comunas) {
+            if (comuna.getNombre().equalsIgnoreCase(nom)) {
+                throw new MeteorologiaException("La región de " + nombre + " ya tiene una comuna con el nombre " + nom + ".");
+            }
+        }
+        comunas.add(new Comuna(cod, nom, this));
     }
 
-    public Comuna findComunaById(int codigo){
+    public Optional findComunaById(int codigo){
         for (Comuna comuna : comunas){
             if(comuna.getCodigo() == codigo){
                 return comuna;
