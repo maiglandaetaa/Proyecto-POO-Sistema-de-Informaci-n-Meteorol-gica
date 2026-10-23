@@ -36,13 +36,13 @@ public class Region {
         comunas.add(new Comuna(cod, nom, this));
     }
 
-    public Optional findComunaById(int codigo){
+    public Optional<Comuna> findComunaById(int codigo){
         for (Comuna comuna : comunas){
             if(comuna.getCodigo() == codigo){
-                return comuna;
+                return Optional.of(comuna);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public Comuna[] getComunas(){
