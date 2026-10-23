@@ -57,12 +57,4 @@ public class Region {
         return total;
     }
 
-    private boolean existeComuna(int cod, String nom){
-        for(Comuna comuna : comunas){
-            if(comuna.getCodigo() == cod || comuna.getNombre().equalsIgnoreCase(nom)){
-                return true;
-            }
-        }
-        return false;
-    }
 }
