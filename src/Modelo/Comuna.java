@@ -42,9 +42,8 @@ public class Comuna {
         return region;
     }
 
-    public int getCantidadEstaciones(){
-        return estaciones.size();
-
+    public EstacionMeteorologica[] getEstaciones(){
+        return estaciones.toArray(new EstacionMeteorologica[0]);
     }
 
     public int getCantidadEstacionesActivas(){
