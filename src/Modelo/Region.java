@@ -52,7 +52,7 @@ public class Region {
     public int getCantidadEstaciones(){
         int total =0;
         for(Comuna comuna : comunas){
-            total+=comuna.getCantidadEstaciones();
+            total+=comuna.getEstaciones().length;
         }
         return total;
     }
