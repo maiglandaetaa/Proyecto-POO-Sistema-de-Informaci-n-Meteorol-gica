@@ -1,5 +1,9 @@
-package Modelo;//Felipe Venegas
+//Felipe Venegas
+package Modelo;
+
 import java.util.ArrayList;
+import java.util.Optional;
+
 public class Comuna {
     private int codigo;
     private String nombre;
@@ -25,14 +29,13 @@ public class Comuna {
         estaciones.add(estacion);
     }
 
-    public EstacionMeteorologica findEstacionById(String codigo){
-        for(EstacionMeteorologica estacion : estaciones){
-            String codigoEstacion = estacion.toString().split(";")[0].trim();
-            if(codigoEstacion.equals(codigo)){
-                return estacion;
+    public Optional <EstacionMeteorologica> findEstacionById(String codigo) {
+        for (EstacionMeteorologica estacion : estaciones) {
+            if (estacion.getCodigo().equals(codigo)) {
+                return Optional.of(estacion);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public Region getRegion(){
