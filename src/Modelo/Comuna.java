@@ -29,7 +29,7 @@ public class Comuna {
         estaciones.add(estacion);
     }
 
-    public Optional <EstacionMeteorologica> findEstacionById(String codigo) {
+    public Optional<EstacionMeteorologica> findEstacionById(String codigo) {
         for (EstacionMeteorologica estacion : estaciones) {
             if (estacion.getCodigo().equals(codigo)) {
                 return Optional.of(estacion);
