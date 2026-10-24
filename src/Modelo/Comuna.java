@@ -49,7 +49,7 @@ public class Comuna {
     public int getCantidadEstacionesActivas(){
         int CantEstActivas = 0;
         for(EstacionMeteorologica estacion : estaciones){
-            if (estacion.toString().split(";")[3].trim().equals("ACTIVO")){
+            if (estacion.getEstado() == Estado.ACTIVO){
                 CantEstActivas++;
             }
         }
