@@ -26,11 +26,11 @@ public class Region {
 
     public void addComuna(int cod, String nom) throws MeteorologiaException {
         if (findComunaById(cod).isPresent()) {
-            throw new MeteorologiaException("La región de " + nombre + " ya tiene una comuna con el código " + cod + ".");
+            throw new MeteorologiaException("La región " + nombre + " ya tiene una comuna con el código " + cod + ".");
         }
         for (Comuna comuna : comunas) {
             if (comuna.getNombre().equalsIgnoreCase(nom)) {
-                throw new MeteorologiaException("La región de " + nombre + " ya tiene una comuna con el nombre " + nom + ".");
+                throw new MeteorologiaException("La región " + nombre + " ya tiene una comuna con el nombre " + nom + ".");
             }
         }
         comunas.add(new Comuna(cod, nom, this));
