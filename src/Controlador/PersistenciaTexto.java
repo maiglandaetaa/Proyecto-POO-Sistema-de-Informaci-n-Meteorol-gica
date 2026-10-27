@@ -1,6 +1,7 @@
 package Controlador;
 
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.File;
@@ -38,6 +39,21 @@ public class PersistenciaTexto {
             throw new MeteorologiaException("No fue posible leer el archivo " + nombreArchivo + ".");
         }
         return registros;
+    }
+
+    public static void escribeRegistros(String nombreArchivo, List<String> lineas)throws MeteorologiaException{
+        File carpeta = new File("datos");
+        if(!carpeta.exists()){
+            carpeta.mkdir();
+        }
+        try{
+            PrintStream archivo = new PrintStream(new File("datos/") + nombreArchivo);
+            for(String linea : lineas){
+                archivo.println(linea);
+            }
+        } catch (FileNotFoundException e){
+            throw new MeteorologiaException("No fue posible escribir el archivo " + nombreArchivo + ".");
+        }
     }
 
 }
