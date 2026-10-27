@@ -8,21 +8,21 @@ import java.util.Scanner;
 
 public class PersistenciaTexto {
 
-    public static String SEPARADOR = ";";
+    public static final String SEPARADOR = ";";
     private static PersistenciaTexto instancia;
 
     private PersistenciaTexto (){
     }
 
-    public static PersistenciaTexto getInstance(){
-       if(instancia == null){
-           instancia = new PersistenciaTexto();
-       }
-       return instancia;
+    public static PersistenciaTexto getInstance() {
+        if (instancia == null) {
+            instancia = new PersistenciaTexto();
+        }
+        return instancia;
     }
 
-    public static List<String[]> leeRegistros(String nombreArchivo)throws MeteorologiaException{
-        File archivo = new File ("datos/" + nombreArchivo);
+    public static List<String[]> leeRegistros(String nombreArchivo) throws MeteorologiaException{
+        File archivo = new File("datos/" + nombreArchivo);
         if (!archivo.exists()){
             throw new MeteorologiaException("No se encontró el archivo " + nombreArchivo + ".");
         }
@@ -34,7 +34,7 @@ public class PersistenciaTexto {
                 registros.add(linea.split(SEPARADOR));
             }
             sc.close();
-        }catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             throw new MeteorologiaException("No fue posible leer el archivo " + nombreArchivo + ".");
         }
         return registros;
