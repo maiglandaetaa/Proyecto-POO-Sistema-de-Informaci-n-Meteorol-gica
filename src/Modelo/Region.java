@@ -1,6 +1,9 @@
-package Modelo;//Felipe Venegas
+//Felipe Venegas
+package Modelo;
 
 import java.util.ArrayList;
+import Controlador.MeteorologiaException;
+import java.util.Optional;
 
 public class Region {
     private int codigo;
@@ -21,21 +24,25 @@ public class Region {
         return nombre;
     }
 
-    public boolean addComuna(int cod, String nom){
-        if(existeComuna(cod, nom)){
-            return false;
+    public void addComuna(int cod, String nom) throws MeteorologiaException {
+        if (findComunaById(cod).isPresent()) {
+            throw new MeteorologiaException("La región " + nombre + " ya tiene una comuna con el código " + cod + ".");
         }
-        Comuna comunaNueva = new Comuna(cod, nom, this);
-        return comunas.add(comunaNueva);
-    }
-
-    public Comuna findComunaById(int codigo){
-        for (Comuna comuna : comunas){
-            if(comuna.getCodigo() == codigo){
-                return comuna;
+        for (Comuna comuna : comunas) {
+            if (comuna.getNombre().equalsIgnoreCase(nom)) {
+                throw new MeteorologiaException("La región " + nombre + " ya tiene una comuna con el nombre " + nom + ".");
             }
         }
-        return null;
+        comunas.add(new Comuna(cod, nom, this));
+    }
+
+    public Optional<Comuna> findComunaById(int codigo){
+        for (Comuna comuna : comunas){
+            if(comuna.getCodigo() == codigo){
+                return Optional.of(comuna);
+            }
+        }
+        return Optional.empty();
     }
 
     public Comuna[] getComunas(){
@@ -45,17 +52,9 @@ public class Region {
     public int getCantidadEstaciones(){
         int total =0;
         for(Comuna comuna : comunas){
-            total+=comuna.getCantidadEstaciones();
+            total+=comuna.getEstaciones().length;
         }
         return total;
     }
 
-    private boolean existeComuna(int cod, String nom){
-        for(Comuna comuna : comunas){
-            if(comuna.getCodigo() == cod || comuna.getNombre().equalsIgnoreCase(nom)){
-                return true;
-            }
-        }
-        return false;
-    }
 }
