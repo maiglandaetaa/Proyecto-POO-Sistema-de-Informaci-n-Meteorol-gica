@@ -1,5 +1,7 @@
 package Modelo;
 
+import Controlador.MeteorologiaException;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -28,18 +30,39 @@ public class EstacionMeteorologica {
         comuna.addEstacion(this);
     }
 
-    public boolean instalaSensor(String codigo, String marca, String modelo, TipoSensor tipo) {
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getPosicion() {
+        return "(" + longitud + ";" + latitud + ";" + altitud + ")";
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public Comuna getComuna() {
+        return comuna;
+    }
+
+    //CAMBIAR A VOID
+    public void instalaSensor(String codigo, String marca, String modelo, TipoSensor tipo) throws MeteorologiaException {
         //CONDICIONES PARA INSTALAR SENSOR
 
         //No se creara si no se encuentra activo
         if (estado != Estado.ACTIVO) {
-            return false;
+            throw new MeteorologiaException("La estación "+codigo+" no esta activa.");
         }
 
         for (Sensor sensor : sensores) {
             //No se crea si ya existe un sensor con el mismo código
             if (sensor.getCodigo().equals(codigo)) {
-                return false;
+                throw new MeteorologiaException("La estación "+codigo+" ya tiene un sensor con el código "+sensor.getCodigo());
             }
 
             /* Marce: Se deben cumplir ambas condiciones para no añadirlo -> ||xx , &&oo
@@ -47,23 +70,23 @@ public class EstacionMeteorologica {
             //No lo crea si ya hay un sensor activo del mismo tipo
             if (sensor.getEstado() == Estado.ACTIVO) {
                 if (tipo == TipoSensor.HUMEDAD && sensor instanceof SensorHumedad) {
-                    return false;
+                    throw new MeteorologiaException("La estación "+ codigo+" ya tiene un sensor ACTIVO de tipo "+tipo);
                 }
                 if (tipo == TipoSensor.TEMPERATURA && sensor instanceof SensorTemperatura) {
-                    return false;
+                    throw new MeteorologiaException("La estación "+ codigo+" ya tiene un sensor ACTIVO de tipo "+tipo);
                 }
                 if (tipo == TipoSensor.PRESION && sensor instanceof SensorPresion) {
-                    return false;
+                    throw new MeteorologiaException("La estación "+ codigo+" ya tiene un sensor ACTIVO de tipo "+tipo);
                 }
                 if (tipo == TipoSensor.VIENTO && sensor instanceof SensorViento) {
-                    return false;
+                    throw new MeteorologiaException("La estación "+ codigo+" ya tiene un sensor ACTIVO de tipo "+tipo);
                 }
                 if (tipo == TipoSensor.PRECIPITACION && sensor instanceof SensorPrecipitacion) {
-                    return false;
+                    throw new MeteorologiaException("La estación "+ codigo+" ya tiene un sensor ACTIVO de tipo "+tipo);
                 }
             }
         }
-        // Marce: Faltaba crear el sensor -> sensores.add(sensor);
+
         Sensor sensor = null;
         switch (tipo) {                                                             //this pk ya estamos en la estacion xd
             case TipoSensor.HUMEDAD -> {sensor = new SensorHumedad(codigo, marca, modelo,this);}
@@ -73,26 +96,36 @@ public class EstacionMeteorologica {
             case TipoSensor.PRECIPITACION -> {sensor = new SensorPrecipitacion(codigo, marca, modelo, this);}
         }
         sensores.add(sensor);
-        return true;
     }
+    public void cambiaEstadoSensor(String codigo, String marca, String modelo, TipoSensor tipo) {
 
-    public boolean registraMedicion(LocalDateTime fechaHora, float valor, String codigoSensor) {
+    }
+    public void registraMedicion(LocalDateTime fechaHora, float valor, String codigoSensor) throws MeteorologiaException{
         if (estado != Estado.ACTIVO) {
-            return false;
+            throw new MeteorologiaException("La estacion "+this.getCodigo()+" no está activa.");
         }
 
         // Avance 2 Marce: addMedicion cambiado a void y usa exception. Implementar try-catch
         for (Sensor sensor : sensores) {
             if (sensor.getCodigo().equals(codigoSensor)) {
-                return sensor.addMedicion(fechaHora, valor);
-            }
+                throw new MeteorologiaException("La estación "+this.getCodigo()+" ya tiene un sensor con el codigo "+codigoSensor);
+            } else if(sensor.getEstado() != Estado.ACTIVO) {
+                throw new MeteorologiaException("El sensor "+sensor.getCodigo()+" no está activo.");
+            } else if () //valueOf pero no tengo idea de como hacerlo lmao
         }
-        return false;
+
     }
 
     public String toString () {
         return codigo + "; " + nombre + "; (" + longitud + ", " + latitud + ", " +
                 altitud + "); " + estado + "; " + sensores.size();
+    }
+    public Sensor[] getSensores() { //no no tengo idea wei me quiero ir a acostar me duele la cabeza me voy a morir, perdon equipo hoy fallé
+        Sensor[] sensor = new Sensores[sensores.size()];
+
+        for (int i=0; i<sensores.size(); i++) {
+            sensor
+        }
     }
 
     public String[][] getResumenSensores() {

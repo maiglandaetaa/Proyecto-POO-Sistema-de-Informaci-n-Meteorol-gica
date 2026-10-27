@@ -4,6 +4,7 @@ import Controlador.InstitutoMeteorologia;
 
 public class Main {
 
+    //patron singleton, solo permite crear una interfaz:
     private static InterfazUsuario instance;
     private static InterfazUsuario interfaz;
 
