@@ -12,8 +12,18 @@ public class InterfazUsuario {
     private Scanner sc = new Scanner(System.in);
 
     //con patron singleton, solo crea un instituto :P
-    private static InstitutoMeteorologia instance;
+    private static InterfazUsuario instance;
     private InstitutoMeteorologia instituto;
+
+    private InterfazUsuario() {
+        instituto = InstitutoMeteorologia.getInstance();
+    }
+    public static InterfazUsuario getInstance() {
+        if (instance == null) {
+            instance = new InterfazUsuario();
+        }
+        return instance;
+    }
 
     public void menuPrincipal() {
 
@@ -211,7 +221,18 @@ public class InterfazUsuario {
 
     //Clases nuevas 2do avance
     private void cambiarEstadoSensor() {
+        System.out.print("Código de la estación: ");
+        String codEstacion = sc.next();
 
+        System.out.print("Código del sensor: ");
+        String codSensor = sc.next();
+
+        try {
+            instituto.cambiaEstadoSensor(codEstacion, codSensor);
+            System.out.println("Estado del sensor cambiado con éxito.");
+        } catch (MeteorologiaException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void cargarDatos() {
