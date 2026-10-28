@@ -7,6 +7,15 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public class InstitutoMeteorologia {
+    private static InstitutoMeteorologia instance;
+    private InstitutoMeteorologia() {}
+    public static InstitutoMeteorologia getInstance() {
+        if (instance == null) {
+            instance = new InstitutoMeteorologia();
+        }
+        return instance;
+    }
+
     private ArrayList<Region> regiones = new ArrayList<>();
     private ArrayList<EstacionMeteorologica> estaciones = new ArrayList<>();
 
@@ -26,28 +35,22 @@ public class InstitutoMeteorologia {
     }
 
     public void creaComuna(int codigo, String nombre, int codigoRegion) throws MeteorologiaException {
-        boolean existeRegion = false;
-
         for (Region region : regiones) {
             if (region.getCodigo() == codigoRegion) {
-                existeRegion = true;
-            }
 
-            for (Comuna comuna : region.getComunas()) {
-                if (comuna.getCodigo() == codigo) {
-                    throw new MeteorologiaException("La región " + region.getNombre() + " ya tiene una comuna con el código " + codigo);
-                } else if(comuna.getNombre().equalsIgnoreCase(nombre)) {
-                    throw new MeteorologiaException("La región "+ region.getNombre()+" ya tiene una comuna con el nombre "+nombre);
+                for (Comuna comuna : region.getComunas()) {
+                    if (comuna.getCodigo() == codigo) {
+                        throw new MeteorologiaException("La región " + region.getNombre() + " ya tiene una comuna con el código " + codigo);
+                    } else if (comuna.getNombre().equalsIgnoreCase(nombre)) {
+                        throw new MeteorologiaException("La región " + region.getNombre() + " ya tiene una comuna con el nombre " + nombre);
+                    }
                 }
+
+                region.addComuna(codigo, nombre);
+                return;
             }
-
-            region.addComuna(codigo, nombre);
-            return;
         }
-
-        if (!existeRegion) {
-            throw new MeteorologiaException("No existe una región con el código" + codigoRegion);
-        }
+        throw new MeteorologiaException("No existe una región con el código" + codigoRegion);
 
     }
 
@@ -95,26 +98,33 @@ public class InstitutoMeteorologia {
     }
 
     public void instalaSensor(String cod, String marca, String modelo, TipoSensor tipo, String codigoEstacion) throws MeteorologiaException {
+        boolean encontrada = false;
         for (EstacionMeteorologica estacion : estaciones) {
             //permite crear el sensor si es que existe la estacion :)
             if (estacion.getCodigo().equals(codigoEstacion)) {
                 estacion.instalaSensor(cod, marca, modelo, tipo);
-            } else {
-                throw new MeteorologiaException("No existe una estación con el código "+codigoEstacion);
+                encontrada = true;
+                break;
             }
+        }
+        if (!encontrada) {
+            throw new MeteorologiaException("No existe una estación con el código "+codigoEstacion);
         }
     }
 
     public void registraMedicion(LocalDateTime fechaHora, float valor, String codEstacion, String codSensor) throws MeteorologiaException {
+        boolean encontrada = false;
 
         for (EstacionMeteorologica estacion : estaciones) {
             if (estacion.getCodigo().equals(codEstacion)) {
                 estacion.registraMedicion(fechaHora, valor, codSensor);
-            } else {
-                throw new MeteorologiaException("No existe una estacion con el código "+codEstacion);
+                encontrada = true;
+                break;
             }
         }
-
+        if (!encontrada) {
+            throw new MeteorologiaException("No existe una estacion con el código "+codEstacion);
+        }
     }
 
     public String[][] listaRegiones() {
@@ -175,6 +185,9 @@ public class InstitutoMeteorologia {
                                 sensoresActivos++;
                             }
                         }
+
+                        datos[4] = String.valueOf(sensoresActivos);
+                        resultado.add(datos);
                     }
                 }
                 return resultado.toArray(new String[0][]);

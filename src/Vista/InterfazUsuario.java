@@ -12,8 +12,18 @@ public class InterfazUsuario {
     private Scanner sc = new Scanner(System.in);
 
     //con patron singleton, solo crea un instituto :P
-    private static InstitutoMeteorologia instance;
+    private static InterfazUsuario instance;
     private InstitutoMeteorologia instituto;
+
+    private InterfazUsuario() {
+        instituto = InstitutoMeteorologia.getInstance();
+    }
+    public static InterfazUsuario getInstance() {
+        if (instance == null) {
+            instance = new InterfazUsuario();
+        }
+        return instance;
+    }
 
     public void menuPrincipal() {
 
