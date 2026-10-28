@@ -5,6 +5,7 @@ import Controlador.MeteorologiaException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class EstacionMeteorologica {
     private String codigo;
@@ -16,6 +17,7 @@ public class EstacionMeteorologica {
     //atributo extra
     private Comuna comuna;
     private ArrayList<Sensor> sensores;
+    private ArrayList<AlertaMeteorologica> alertas;
 
     public EstacionMeteorologica(String cod, String nombre, float lon, float lat, float alt, Comuna comuna) {
         codigo = cod;
@@ -26,6 +28,7 @@ public class EstacionMeteorologica {
         //atributo extra
         estado = Estado.ACTIVO; //queda con un estado activo al crearlo
         sensores = new ArrayList<>();
+        alertas = new ArrayList<>();
         this.comuna = comuna;
         comuna.addEstacion(this);
     }
@@ -97,8 +100,35 @@ public class EstacionMeteorologica {
         }
         sensores.add(sensor);
     }
-    public void cambiaEstadoSensor(String codigo, String marca, String modelo, TipoSensor tipo) {
+    public void cambiaEstadoSensor(String codigo, String marca, String modelo, TipoSensor tipo) throws MeteorologiaException {
+        boolean encontrado = false;
+        for (Sensor sensor : sensores) {
+            if (sensor.getCodigo().equals(codigo) && sensor.getMarca().equals(marca) && sensor.getModelo().equals(modelo) && sensor.getTipo() == tipo) {
+                encontrado = true;
 
+                if (sensor.getEstado() == Estado.ACTIVO) {
+                    sensor.setEstado(Estado.INACTIVO);
+                } else {
+                    boolean existeActivo = false;
+                    for (Sensor otro : sensores) {
+                        if (otro != sensor && otro.getTipo() == tipo && otro.getEstado() == Estado.ACTIVO) {
+                            existeActivo = true;
+                            break;
+                        }
+                    }
+
+                    if (existeActivo) {
+                        throw new MeteorologiaException("Ya existe un sensor activo de tipo "+tipo);
+                    }
+                    sensor.setEstado(Estado.ACTIVO);
+                }
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            throw new MeteorologiaException("No existe un sensor con el código "+codigo);
+        }
     }
     public void registraMedicion(LocalDateTime fechaHora, float valor, String codigoSensor) throws MeteorologiaException{
         if (estado != Estado.ACTIVO) {
@@ -106,14 +136,28 @@ public class EstacionMeteorologica {
         }
 
         // Avance 2 Marce: addMedicion cambiado a void y usa exception. Implementar try-catch
+        boolean encontrada = false;
+
         for (Sensor sensor : sensores) { //valueOf pero no tengo idea de como hacerlo lmao
             if (sensor.getCodigo().equals(codigoSensor)) {
+                encontrada = true;
                 if (sensor.getEstado() != Estado.ACTIVO) {
                     throw new MeteorologiaException("El sensor "+sensor.getCodigo()+" no está activo.");
                 }
                 sensor.addMedicion(fechaHora, valor);
-                return;
+                if (sensor instanceof Alertable alertable) {
+                    if (alertable.generaAlerta(valor)) {
+                        NivelAlerta nivel = alertable.evaluaAlerta(valor).get();
+                        AlertaMeteorologica alerta = new AlertaMeteorologica(fechaHora, valor, nivel, alertable.getFenomeno(valor), sensor);
+                        alertas.add(alerta);
+                    }
+                }
+                break;
             }
+        }
+
+        if (!encontrada) {
+            throw new MeteorologiaException("El sensor"+codigoSensor+" no existe en la estación "+this.getCodigo()+".");
         }
 
     }
@@ -177,5 +221,33 @@ public class EstacionMeteorologica {
             }
         }
         return new String[0][0];
+    }
+
+    public AlertaMeteorologica[] getAlertasBetween(LocalDateTime inicio, LocalDateTime fin) {
+        ArrayList<AlertaMeteorologica> resultado = new ArrayList<>();
+        for (AlertaMeteorologica alerta : alertas) {
+            LocalDateTime fecha = alerta.getFechaHora();
+
+            if (!fecha.isBefore(inicio) && !fecha.isAfter(fin)) {
+                resultado.add(alerta);
+            }
+        }
+        return resultado.toArray(new AlertaMeteorologica[0]);
+    }
+
+    public Optional<Sensor> findSensorById(String codigo) {
+        Sensor sensorEncontrado = null;
+        boolean encontrado = false;
+        for (Sensor sensor : sensores) {
+            if (sensor.getCodigo().equals(codigo)) {
+                sensorEncontrado = sensor;
+                encontrado = true;
+                break;
+            }
+        }
+        if (encontrado) {
+            return Optional.of(sensorEncontrado);
+        }
+        return Optional.empty();
     }
 }

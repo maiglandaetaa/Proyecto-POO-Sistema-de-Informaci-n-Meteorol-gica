@@ -127,6 +127,34 @@ public class InstitutoMeteorologia {
         }
     }
 
+    public void cambiaEstadoSensor(String codEstacion, String codSensor) throws MeteorologiaException {
+        boolean encontrado = false;
+        for (EstacionMeteorologica estacion : estaciones) {
+            if (estacion.getCodigo().equals(codEstacion)) {
+                encontrado = true;
+
+                Sensor sensorEncontrado = null;
+                for (Sensor sensor : estacion.getSensores()) {
+                    if (sensor.getCodigo().equals(codSensor)) {
+                        sensorEncontrado = sensor;
+                        break;
+                    }
+                }
+
+                if (sensorEncontrado == null) {
+                    throw new MeteorologiaException("No existe un sensor con el código "+codSensor);
+                }
+
+                estacion.cambiaEstadoSensor(sensorEncontrado.getCodigo(), sensorEncontrado.getMarca(), sensorEncontrado.getModelo(), sensorEncontrado.getTipo());
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            throw new MeteorologiaException("No existe una estación con el código "+codEstacion);
+        }
+    }
+
     public String[][] listaRegiones() {
         String[][] resultado = new String[regiones.size()][4];
         int i=0;

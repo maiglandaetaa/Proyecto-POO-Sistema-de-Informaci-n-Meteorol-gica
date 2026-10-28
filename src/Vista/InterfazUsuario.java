@@ -221,7 +221,18 @@ public class InterfazUsuario {
 
     //Clases nuevas 2do avance
     private void cambiarEstadoSensor() {
+        System.out.print("Código de la estación: ");
+        String codEstacion = sc.next();
 
+        System.out.print("Código del sensor: ");
+        String codSensor = sc.next();
+
+        try {
+            instituto.cambiaEstadoSensor(codEstacion, codSensor);
+            System.out.println("Estado del sensor cambiado con éxito.");
+        } catch (MeteorologiaException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void cargarDatos() {
