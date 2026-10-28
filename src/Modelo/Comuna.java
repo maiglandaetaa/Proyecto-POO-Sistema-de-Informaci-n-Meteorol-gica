@@ -1,5 +1,9 @@
 //Felipe Venegas
+package Modelo;
+
 import java.util.ArrayList;
+import java.util.Optional;
+
 public class Comuna {
     private int codigo;
     private String nombre;
@@ -25,29 +29,27 @@ public class Comuna {
         estaciones.add(estacion);
     }
 
-    public EstacionMeteorologica findEstacionById(String codigo){
-        for(EstacionMeteorologica estacion : estaciones){
-            String codigoEstacion = estacion.toString().split(";")[0].trim();
-            if(codigoEstacion.equals(codigo)){
-                return estacion;
+    public Optional<EstacionMeteorologica> findEstacionById(String codigo) {
+        for (EstacionMeteorologica estacion : estaciones) {
+            if (estacion.getCodigo().equals(codigo)) {
+                return Optional.of(estacion);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public Region getRegion(){
         return region;
     }
 
-    public int getCantidadEstaciones(){
-        return estaciones.size();
-
+    public EstacionMeteorologica[] getEstaciones(){
+        return estaciones.toArray(new EstacionMeteorologica[0]);
     }
 
     public int getCantidadEstacionesActivas(){
         int CantEstActivas = 0;
         for(EstacionMeteorologica estacion : estaciones){
-            if (estacion.toString().split(";")[3].trim().equals("ACTIVO")){
+            if (estacion.getEstado() == Estado.ACTIVO){
                 CantEstActivas++;
             }
         }

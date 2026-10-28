@@ -1,3 +1,5 @@
+package Modelo;
+
 // Marcela Landaeta
 public enum TipoSensor {
     HUMEDAD,

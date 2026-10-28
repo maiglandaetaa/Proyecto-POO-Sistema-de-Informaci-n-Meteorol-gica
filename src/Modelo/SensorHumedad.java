@@ -1,3 +1,5 @@
+package Modelo;
+
 // Marcela Landaeta
 public class SensorHumedad extends Sensor {
 
@@ -13,5 +15,10 @@ public class SensorHumedad extends Sensor {
     @Override
     public boolean esValorAdmisible(float valor) {
         return valor >= 0 && valor <= 100;
+    }
+
+    @Override
+    public TipoSensor getTipo() {
+        return TipoSensor.HUMEDAD;
     }
 }

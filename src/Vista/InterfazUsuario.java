@@ -1,19 +1,21 @@
+package Vista;
+
+import Controlador.InstitutoMeteorologia;
+import Controlador.MeteorologiaException;
+import Modelo.TipoSensor;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class InterfazUsuario {
     private Scanner sc = new Scanner(System.in);
+
+    //con patron singleton, solo crea un instituto :P
+    private static InstitutoMeteorologia instance;
     private InstitutoMeteorologia instituto;
 
-    public static void main(String[] args) {
-        InterfazUsuario interfaz = new InterfazUsuario();
-        interfaz.menuPrincipal();
-    }
-
-
-    private void menuPrincipal() {
-        instituto = new InstitutoMeteorologia();
+    public void menuPrincipal() {
 
         int opcion;
         do {
@@ -24,8 +26,11 @@ public class InterfazUsuario {
             System.out.println("3. Crear estación meteorológica");
             System.out.println("4. Instalar sensor");
             System.out.println("5. Registrar medición");
-            System.out.println("6. Generar listados");
-            System.out.println("7. Salir");
+            System.out.println("6. Cambiar estado de sensor");
+            System.out.println("7. Generar listados");
+            System.out.println("8. Cargar datos");
+            System.out.println("9. Guardar datos");
+            System.out.println("10. Salir");
             System.out.print("Opción: ");
             opcion = sc.nextInt();
 
@@ -47,16 +52,28 @@ public class InterfazUsuario {
                     registrarMedicion();
                 }
                 case 6 -> {
-                    menuListados();
+                    cambiarEstadoSensor();
                 }
                 case 7 -> {
-                    System.out.println("Saliendo...");
+                    menuListados();
+                }
+
+                case 8 -> {
+                    cargarDatos();
+                }
+
+                case 9 -> {
+                    guardarDatos();
+                }
+
+                case 10 -> {
+                    salir();
                 }
                 default -> {
                     System.out.println("Opción no válida, intentelo de nuevo.");
                 }
             }
-        } while (opcion != 7);
+        } while (opcion != 10);
     }
 
 
@@ -67,12 +84,11 @@ public class InterfazUsuario {
         System.out.print("Nombre de la región: ");
         String nombre = sc.next();
 
-        boolean creada = instituto.creaRegion(codigo, nombre);
-
-        if (creada) { //si se pudo crear devuelve mensaje:
+        try {
+            instituto.creaRegion(codigo, nombre);
             System.out.println("Región creada con éxito.");
-        } else { //y si si no, devuelve mensaje:
-            System.out.println("No se pudo crear la región, inténtelo de nuevo.");
+        } catch (MeteorologiaException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -87,14 +103,12 @@ public class InterfazUsuario {
         System.out.print("Código de la región: ");
         int codigoRegion = sc.nextInt();
 
-        boolean resultado = instituto.creaComuna(codigo, nombre, codigoRegion);
-
-        if (resultado) {
+        try {
+            instituto.creaComuna(codigo, nombre, codigoRegion);
             System.out.println("Comuna creada con éxito.");
-        } else {
-            System.out.println("No se pudo crear la comuna, inténtelo de nuevo.");
+        } catch (MeteorologiaException e) {
+            System.out.println(e.getMessage());
         }
-
     }
 
 
@@ -120,14 +134,12 @@ public class InterfazUsuario {
         System.out.print("Ingrese código de la comuna perteneciente: ");
         int codComuna = sc.nextInt();
 
-        boolean creada = instituto.creaEstacion(cod, nombre, lon, lat, alt, codRegion, codComuna);
-
-        if (creada) {
-            System.out.println("Estación meteorológica creada con éxito.");
-        } else {
-            System.out.println("No se pudo crear la estación meteorológica, inténtelo de nuevo.");
+        try {
+            instituto.creaEstacion(cod, nombre, lon, lat, alt, codRegion, codComuna);
+            System.out.println("Estación creada con éxito.");
+        } catch (MeteorologiaException e) {
+            System.out.println(e.getMessage());
         }
-
     }
 
 
@@ -164,12 +176,11 @@ public class InterfazUsuario {
             default -> {System.out.println("Tipo inválido."); return;}
         }
 
-        boolean resultado = instituto.instalaSensor(cod, marca, modelo, sensor, codEstacion);
-
-        if (resultado) {
-            System.out.println("Sensor instalado con éxito.");
-        } else {
-            System.out.println("No se pudo instalar el sensor, inténtelo de nuevo.");
+        try {
+            instituto.instalaSensor(cod, marca, modelo, sensor, codEstacion);
+            System.out.println("Sensor creado con exito.");
+        } catch (MeteorologiaException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -190,16 +201,32 @@ public class InterfazUsuario {
         System.out.print("Ingrese valor de la medición: ");
         float valor = sc.nextFloat();
 
-        boolean resultado = instituto.registraMedicion(fechaHora, valor, codEstacion, codSensor);
-
-        if (resultado) {
+        try {
+            instituto.registraMedicion(fechaHora, valor, codEstacion, codSensor);
             System.out.println("Medición registrada con éxito.");
-        } else {
-            System.out.println("No se pudo registrar la medición, inténtelo de nuevo.");
+        } catch (MeteorologiaException e) {
+            System.out.println(e.getMessage());
         }
     }
 
+    //Clases nuevas 2do avance
+    private void cambiarEstadoSensor() {
 
+    }
+
+    private void cargarDatos() {
+
+    }
+
+    private void guardarDatos() {
+
+    }
+
+    private void salir() {
+
+    }
+
+    //clases 1er avance
     private void menuListados() {
         int opcion2;
         do {
@@ -279,7 +306,7 @@ public class InterfazUsuario {
 
         System.out.println("\nESTACIONES METEOROLÓGICAS");
         System.out.println("-------------------------------------------------------------------------------------");
-        System.out.printf("%-20s %-25s %-25s %-25s%n", "Código", "Nombre y ubicación", "Estado", "Sensores");
+        System.out.printf("%-20s %-25s %-25s %-25s%n", "Código", "Nombre y ubicación", "Modelo.Estado", "Sensores");
         System.out.println("-------------------------------------------------------------------------------------");
 
         for (String[] estacion : estaciones) {
@@ -301,7 +328,7 @@ public class InterfazUsuario {
 
         System.out.println("\nSENSORES");
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.printf("%-15s %-20s %-20s %-20s %-20s %-20s %-20s%n", "Código", "Tipo", "Marca", "Modelo", "Unidad", "Estado", "Última medición");
+        System.out.printf("%-15s %-20s %-20s %-20s %-20s %-20s %-20s%n", "Código", "Tipo", "Marca", "Modelo", "Unidad", "Modelo.Estado", "Última medición");
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
 
         for (String[] sensor : sensores) {
@@ -342,5 +369,14 @@ public class InterfazUsuario {
         for (String[] medicion : mediciones) {
             System.out.printf("%-20s %-25s %-25s %-25s%n", medicion[0], medicion[1], medicion[2], medicion[3]);
         }
+    }
+
+    //Clases nuevas 2do avance
+    private void listarResumenMediciones() {
+
+    }
+
+    private void listarAlertas() {
+
     }
 }
