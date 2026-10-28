@@ -201,12 +201,11 @@ public class InterfazUsuario {
         System.out.print("Ingrese valor de la medición: ");
         float valor = sc.nextFloat();
 
-        boolean resultado = instituto.registraMedicion(fechaHora, valor, codEstacion, codSensor);
-
-        if (resultado) {
+        try {
+            instituto.registraMedicion(fechaHora, valor, codEstacion, codSensor);
             System.out.println("Medición registrada con éxito.");
-        } else {
-            System.out.println("No se pudo registrar la medición, inténtelo de nuevo.");
+        } catch (MeteorologiaException e) {
+            System.out.println(e.getMessage());
         }
     }
 

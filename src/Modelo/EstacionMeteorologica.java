@@ -106,26 +106,28 @@ public class EstacionMeteorologica {
         }
 
         // Avance 2 Marce: addMedicion cambiado a void y usa exception. Implementar try-catch
-        for (Sensor sensor : sensores) {
+        for (Sensor sensor : sensores) { //valueOf pero no tengo idea de como hacerlo lmao
             if (sensor.getCodigo().equals(codigoSensor)) {
-                throw new MeteorologiaException("La estación "+this.getCodigo()+" ya tiene un sensor con el codigo "+codigoSensor);
-            } else if(sensor.getEstado() != Estado.ACTIVO) {
-                throw new MeteorologiaException("El sensor "+sensor.getCodigo()+" no está activo.");
-            } else if () //valueOf pero no tengo idea de como hacerlo lmao
+                if (sensor.getEstado() != Estado.ACTIVO) {
+                    throw new MeteorologiaException("El sensor "+sensor.getCodigo()+" no está activo.");
+                }
+                sensor.addMedicion(fechaHora, valor);
+                return;
+            }
         }
 
     }
 
     public String toString () {
-        return codigo + "; " + nombre + "; (" + longitud + ", " + latitud + ", " +
-                altitud + "); " + estado + "; " + sensores.size();
+        return codigo + "; " + nombre + "; (" + longitud + ", " + latitud + ", " + altitud + "); " + estado + "; " + sensores.size();
     }
     public Sensor[] getSensores() { //no no tengo idea wei me quiero ir a acostar me duele la cabeza me voy a morir, perdon equipo hoy fallé
-        Sensor[] sensor = new Sensores[sensores.size()];
+        Sensor[] sensor = new Sensor[sensores.size()];
 
         for (int i=0; i<sensores.size(); i++) {
-            sensor
+            sensor[i] = sensores.get(i);
         }
+        return sensor;
     }
 
     public String[][] getResumenSensores() {
@@ -141,11 +143,12 @@ public class EstacionMeteorologica {
             datos[i][4] = sensor.getUnidad();
             datos[i][5] = sensor.getEstado().toString();
             // Avance 2 Marce: Metodo eliminado, modifique código
-            Medicion ultima = sensor.getLastMedicion();
+            Medicion[] mediciones = sensor.getMediciones();
 
-            if (ultima == null) {
+            if (mediciones.length == 0) {
                 datos[i][6] = "Sin mediciones.";
             } else {
+                Medicion ultima = mediciones[mediciones.length - 1];
                 datos[i][6] = ultima.toString() + " " + sensor.getUnidad();
             }
 

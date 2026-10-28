@@ -1,12 +1,10 @@
 package Controlador;
 
-import Modelo.Comuna;
-import Modelo.EstacionMeteorologica;
-import Modelo.Region;
-import Modelo.TipoSensor;
+import Modelo.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class InstitutoMeteorologia {
     private ArrayList<Region> regiones = new ArrayList<>();
@@ -114,7 +112,7 @@ public class InstitutoMeteorologia {
                 estacion.registraMedicion(fechaHora, valor, codSensor);
             } else {
                 throw new MeteorologiaException("No existe una estacion con el código "+codEstacion);
-            }.
+            }
         }
 
     }
@@ -143,7 +141,7 @@ public class InstitutoMeteorologia {
 
                 datos[0] = String.valueOf(comuna.getCodigo());
                 datos[1] = String.valueOf(comuna.getNombre());
-                datos[2] = String.valueOf(comuna.getCantidadEstaciones());
+                datos[2] = String.valueOf(comuna.getEstaciones().length);
                 datos[3] = String.valueOf(comuna.getCantidadEstacionesActivas());
                 datos[4] = String.valueOf(region.getNombre());
                 // Marce: Faltaba región ^^^
@@ -156,22 +154,27 @@ public class InstitutoMeteorologia {
     public String[][] listaEstaciones(int codigoRegion, int codigoComuna) {
         for (Region region : regiones) {
             if (region.getCodigo() == codigoRegion) {
-                Comuna comuna = region.findComunaById(codigoComuna);
+                Optional<Comuna> comunaEncontrada = region.findComunaById(codigoComuna);
 
-                if (comuna == null) {
-                    return new String[0][0];
-                }
+                if (comunaEncontrada.isEmpty()) {return new String[0][0];}
 
+                Comuna comuna = comunaEncontrada.get();
                 ArrayList<String[]> resultado = new ArrayList<>();
 
                 for (EstacionMeteorologica estacion : estaciones) {
                     String[] datos = estacion.toString().split("; ");
                     String codigoEstacion = datos[0];
 
-                    EstacionMeteorologica encontrada = comuna.findEstacionById(codigoEstacion);
-                    // Marce: No indica sensores activos, no lo supe solucionar
-                    if (encontrada != null) {
-                        resultado.add(datos);
+                    Optional<EstacionMeteorologica> encontrada = comuna.findEstacionById(codigoEstacion);
+
+                    if (encontrada.isPresent()) {
+                        int sensoresActivos = 0;
+
+                        for (Sensor sensor : estacion.getSensores()) {
+                            if (sensor.getEstado() == Estado.ACTIVO) {
+                                sensoresActivos++;
+                            }
+                        }
                     }
                 }
                 return resultado.toArray(new String[0][]);
