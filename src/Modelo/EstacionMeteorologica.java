@@ -165,6 +165,7 @@ public class EstacionMeteorologica {
     public String toString () {
         return codigo + "; " + nombre + "; (" + longitud + ", " + latitud + ", " + altitud + "); " + estado + "; " + sensores.size();
     }
+
     public Sensor[] getSensores() { //no no tengo idea wei me quiero ir a acostar me duele la cabeza me voy a morir, perdon equipo hoy fallé
         Sensor[] sensor = new Sensor[sensores.size()];
 
