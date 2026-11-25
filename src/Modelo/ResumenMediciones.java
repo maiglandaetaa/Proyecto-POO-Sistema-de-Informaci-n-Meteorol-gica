@@ -3,6 +3,9 @@ package Modelo;
 
 import Controlador.MeteorologiaException;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 public class ResumenMediciones {
     private final int cantidad;
     private final float promedio;
@@ -13,22 +16,10 @@ public class ResumenMediciones {
             throw new MeteorologiaException("Arreglo de mediciones no puede estar vacío");
         }
         this.cantidad = mediciones.length;
-        float suma = 0;
-        Medicion menor = mediciones[0];
-        Medicion mayor = mediciones[0];
 
-        for (Medicion medicion : mediciones) {
-            suma += medicion.getValor();
-            if (medicion.getValor() > mayor.getValor() || (medicion.getValor() == mayor.getValor() && medicion.getFechaHora().isBefore(mayor.getFechaHora()))) {
-                mayor = medicion;
-            }
-            if (medicion.getValor() < menor.getValor() || (medicion.getValor() == menor.getValor() && medicion.getFechaHora().isBefore(menor.getFechaHora()))) {
-                menor = medicion;
-            }
-        }
-        minima = menor;
-        maxima = mayor;
-        this.promedio = suma / cantidad;
+        this.minima = Arrays.stream(mediciones).min(Comparator.comparing(Medicion::getValor)).get();
+        this.maxima = Arrays.stream(mediciones).max(Comparator.comparing(Medicion::getValor).thenComparing(Medicion::getFechaHora, Comparator.reverseOrder())).get();
+        this.promedio = (float) Arrays.stream(mediciones).mapToDouble(Medicion::getValor).average().orElse(0);
     }
 
     public int getCantidad() {
