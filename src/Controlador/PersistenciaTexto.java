@@ -40,4 +40,5 @@ public class PersistenciaTexto {
         }
         return registros;
     }
+
 }

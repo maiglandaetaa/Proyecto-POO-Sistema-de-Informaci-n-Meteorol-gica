@@ -53,5 +53,4 @@ public class Region implements Serializable {
               .mapToInt(comuna -> comuna.getEstaciones().length)
               .sum();
     }
-
 }
