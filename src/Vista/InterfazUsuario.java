@@ -421,9 +421,10 @@ public class InterfazUsuario {
             System.out.printf("%-20s %-25s %-25s %-25s%n", medicion[0], medicion[1], medicion[2], medicion[3]);
         }
     }
+    
     // M: Cambio a público
     //Clases nuevas 2do avance
-    private void listarResumenMediciones() {
+    public void listarResumenMediciones() {
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
         System.out.print("Ingrese el código de la estación: ");
