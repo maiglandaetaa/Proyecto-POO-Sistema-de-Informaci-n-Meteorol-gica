@@ -2,7 +2,6 @@ package Vista;
 
 import Controlador.InstitutoMeteorologia;
 import Controlador.MeteorologiaException;
-import Modelo.Region;
 import Modelo.TipoSensor;
 
 import java.time.LocalDateTime;
@@ -92,8 +91,8 @@ public class InterfazUsuario {
         } while (opcion != 10);
     }
 
-
-    private void crearRegion() {
+    // M: Cambio a público
+    public void crearRegion() {
         System.out.print("Código de la región: ");
         int codigo = sc.nextInt();
 
@@ -108,8 +107,8 @@ public class InterfazUsuario {
         }
     }
 
-
-    private void crearComuna() {
+    // M: Cambio a público
+    public void crearComuna() {
         System.out.print("Código de la comuna: ");
         int codigo = sc.nextInt();
 
@@ -127,8 +126,8 @@ public class InterfazUsuario {
         }
     }
 
-
-    private void crearEstacionMeteorologica() {
+    // M: Cambio a público
+    public void crearEstacionMeteorologica() {
         System.out.print("Código de la estación: ");
         String cod = sc.next();
 
@@ -303,8 +302,8 @@ public class InterfazUsuario {
         } while (opcion2 != 8);
     }
 
-
-    private void listarRegiones() {
+    // M: Cambio a público
+    public void listarRegiones() {
         String[][] regiones = instituto.listaRegiones(); //matriz con datos de las regiones
 
         if (regiones.length ==0) {
@@ -322,8 +321,8 @@ public class InterfazUsuario {
         }
     }
 
-
-    private void listarComunas() {
+    // M: Cambio a público
+    public void listarComunas() {
         String[][] comunas = instituto.listaComunas();
         if (comunas.length == 0) {
             System.out.println("No existen comunas registradas");
@@ -341,8 +340,8 @@ public class InterfazUsuario {
 
     }
 
-
-    private void listarEstaciones() {
+    // M: Cambio a público
+    public void listarEstaciones() {
         System.out.print("Ingrese código de la región: ");
         int codigoRegion = sc.nextInt();
 
@@ -365,8 +364,8 @@ public class InterfazUsuario {
         }
     }
 
-
-    private void listarSensores() {
+    // M: Cambio a público
+    public void listarSensores() {
         System.out.print("Ingrese código de la estación: ");
         String codigoEstacion = sc.next();
 
@@ -387,8 +386,8 @@ public class InterfazUsuario {
         }
     }
 
-
-    private void listarMediciones() {
+    // M: Cambio a público
+    public void listarMediciones() {
         System.out.print("Ingrese código de la estación: ");
         String codEstacion = sc.next();
 
@@ -422,8 +421,9 @@ public class InterfazUsuario {
         }
     }
 
+    // M: Cambio a público
     //Clases nuevas 2do avance
-    private void listarResumenMediciones() {
+    public void listarResumenMediciones() {
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
         System.out.print("Ingrese el código de la estación: ");
