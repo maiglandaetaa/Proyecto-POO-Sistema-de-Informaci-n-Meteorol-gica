@@ -4,8 +4,12 @@ package Modelo;
 import java.util.ArrayList;
 import Controlador.MeteorologiaException;
 import java.util.Optional;
+import java.io.Serializable;
 
-public class Region {
+public class Region implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private int codigo;
     private String nombre;
     private ArrayList<Comuna> comunas;
@@ -28,21 +32,16 @@ public class Region {
         if (findComunaById(cod).isPresent()) {
             throw new MeteorologiaException("La región " + nombre + " ya tiene una comuna con el código " + cod + ".");
         }
-        for (Comuna comuna : comunas) {
-            if (comuna.getNombre().equalsIgnoreCase(nom)) {
+        if (comunas.stream().map(Comuna::getNombre).anyMatch(nom::equalsIgnoreCase)) {
                 throw new MeteorologiaException("La región " + nombre + " ya tiene una comuna con el nombre " + nom + ".");
-            }
         }
         comunas.add(new Comuna(cod, nom, this));
     }
 
     public Optional<Comuna> findComunaById(int codigo){
-        for (Comuna comuna : comunas){
-            if(comuna.getCodigo() == codigo){
-                return Optional.of(comuna);
-            }
-        }
-        return Optional.empty();
+        return comunas.stream()
+                .filter(comuna -> comuna.getCodigo() == codigo)
+                .findFirst();
     }
 
     public Comuna[] getComunas(){
@@ -50,11 +49,9 @@ public class Region {
     }
 
     public int getCantidadEstaciones(){
-        int total =0;
-        for(Comuna comuna : comunas){
-            total+=comuna.getEstaciones().length;
-        }
-        return total;
+      return comunas.stream()
+              .mapToInt(comuna -> comuna.getEstaciones().length)
+              .sum();
     }
 
 }
