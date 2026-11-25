@@ -1,3 +1,4 @@
+//Fernanda López
 package Controlador;
 
 import Modelo.*;
@@ -24,14 +25,14 @@ public class InstitutoMeteorologia {
     private ArrayList<EstacionMeteorologica> estaciones = new ArrayList<>();
 
     public void creaRegion(int codigo, String nombre) throws MeteorologiaException {
-        for (Region region : regiones) {
-            if(region.getCodigo() == codigo && region.getNombre().equalsIgnoreCase(nombre)) {
-                throw new MeteorologiaException("Ya existe una región con ese código y nombre.");
-            } else if (region.getCodigo() == codigo) {
-                throw new MeteorologiaException("Ya existe una región con el código "+ codigo);
-            } else if (region.getNombre().equalsIgnoreCase(nombre)) {
-                throw new MeteorologiaException("Ya existe una región con el nombre " + nombre);
-            }
+
+        if (regiones.stream().anyMatch(region -> region.getCodigo() == codigo &&
+                region.getNombre().equalsIgnoreCase(nombre))) {
+            throw new MeteorologiaException("Ya existe una región con ese código y nombre.");
+        } else if (regiones.stream().anyMatch(region -> region.getCodigo() == codigo)) {
+            throw new MeteorologiaException("Ya existe una región con el código " + codigo);
+        } else if (regiones.stream().anyMatch(regiones -> regiones.getNombre().equalsIgnoreCase(nombre))) {
+            throw new MeteorologiaException("Ya existe una región con el nombre " + nombre);
         }
 
         Region region = new Region(codigo, nombre);
@@ -446,52 +447,19 @@ public class InstitutoMeteorologia {
         return resultado;
     }
 
-    private Optional findEstacion(String codigo) {
-        for (EstacionMeteorologica estacion : estaciones) {
-            if (estacion.getCodigo().equalsIgnoreCase(codigo)) {
-                return Optional.of(estacion);
-            }
-        }
-        return Optional.empty();
+    private Optional<EstacionMeteorologica> findEstacion(String codigo) {
+        return estaciones.stream().filter(estacion -> estacion.getCodigo().equalsIgnoreCase(codigo)).findFirst();
     }
 
-    private Optional findRegion(int codigo) {
-        for (Region region : regiones) {
-            if (region.getCodigo() == codigo) {
-                return Optional.of(region);
-            }
-        }
-        return Optional.empty();
+    private Optional<Region> findRegion(int codigo) {
+        return regiones.stream().filter(region -> region.getCodigo() == codigo).findFirst();
     }
 
-    private Optional findComuna(int codigoRegion, int codigoComuna) {
-
-        Optional<Region> resultadoRegion = findRegion(codigoRegion);
-        if (resultadoRegion.isEmpty()) {
-            return Optional.empty();
-        }
-        Region region = resultadoRegion.get();
-        for (Comuna comuna : region.getComunas()) {
-            if (comuna.getCodigo() == codigoComuna) {
-                return Optional.of(comuna);
-            }
-        }
-        return Optional.empty();
+    private Optional<Comuna> findComuna(int codigoRegion, int codigoComuna) {
+        return findRegion(codigoRegion).flatMap(region -> region.findComunaById(codigoComuna));
     }
 
-    private Optional findSensor(String codigoEstacion, String codigoSensor) {
-        Optional<EstacionMeteorologica> estacion = findEstacion(codigoEstacion);
-
-        if (estacion.isEmpty()) {
-            return Optional.empty();
-        }
-
-        for (Sensor sensor : estacion.get().getSensores()) {
-            if (sensor.getCodigo().equalsIgnoreCase(codigoSensor)) {
-                return Optional.of(sensor);
-            }
-        }
-
-        return Optional.empty();
+    private Optional<Sensor> findSensor(String codigoEstacion, String codigoSensor) {
+        return findEstacion(codigoEstacion).flatMap(estacion -> estacion.findSensorById(codigoSensor));
     }
 }

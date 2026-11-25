@@ -30,12 +30,7 @@ public class Comuna {
     }
 
     public Optional<EstacionMeteorologica> findEstacionById(String codigo) {
-        for (EstacionMeteorologica estacion : estaciones) {
-            if (estacion.getCodigo().equals(codigo)) {
-                return Optional.of(estacion);
-            }
-        }
-        return Optional.empty();
+        return estaciones.stream().filter(estacion -> estacion.getCodigo().equals(codigo)).findFirst();
     }
 
     public Region getRegion(){

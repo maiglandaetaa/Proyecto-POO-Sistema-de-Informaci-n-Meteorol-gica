@@ -51,10 +51,8 @@ public abstract class Sensor {
             throw new MeteorologiaException("Medición no pudo ser registrada.");
         }
 
-        for (Medicion medicion : medicionesArraylist) {
-            if (medicion.getFechaHora().equals(fechaHora)) {
-                throw new MeteorologiaException("Medición no pudo ser registrada.");
-            }
+        if (medicionesArraylist.stream().anyMatch(medicion -> medicion.getFechaHora().equals(fechaHora))) {
+            throw new MeteorologiaException("Medición no pudo ser registrada.");
         }
         medicionesArraylist.add(new Medicion(fechaHora, valor));
     }
