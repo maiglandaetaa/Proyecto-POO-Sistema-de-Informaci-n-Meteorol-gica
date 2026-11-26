@@ -4,6 +4,7 @@ import Controlador.MeteorologiaException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Optional;
 
 // Uso de polimorfismo, al momento de hacer algun ArrayList de sensor (superclase),
@@ -45,39 +46,24 @@ public abstract class Sensor {
         this.estado = estado;
     }
 
-    // Avance 2: Modificación excepción
+    // Avance 3: Ciclos con lambda
     public void addMedicion(LocalDateTime fechaHora, float valor) throws MeteorologiaException {
         if (!esValorAdmisible(valor) || estado != Estado.ACTIVO) {
             throw new MeteorologiaException("Medición no pudo ser registrada.");
         }
 
-        for (Medicion medicion : medicionesArraylist) {
-            if (medicion.getFechaHora().equals(fechaHora)) {
-                throw new MeteorologiaException("Medición no pudo ser registrada.");
-            }
+        boolean existeMedicion = medicionesArraylist.stream().anyMatch(m -> m.getFechaHora().equals(fechaHora));
+
+        if (existeMedicion) {
+            throw new MeteorologiaException("Medición no pudo ser registrada.");
         }
         medicionesArraylist.add(new Medicion(fechaHora, valor));
     }
 
-    // Adicion Avance 2: Algoritmo burbuja, recurso de uso en trello
+    // Avance 3: Ciclos con lambda
     public Medicion[] getMediciones() {
         ArrayList<Medicion> resultadoArrayList = new ArrayList<>(medicionesArraylist);
-
-        for (int i = 0; i < resultadoArrayList.size() - 1; i++) {
-            for (int j = 0; j < resultadoArrayList.size() - 1 - i; j++) {
-
-                LocalDateTime fecha1 = resultadoArrayList.get(j).getFechaHora();
-                LocalDateTime fecha2 = resultadoArrayList.get(j + 1).getFechaHora();
-
-                if (fecha1.isAfter(fecha2)) {
-                    Medicion aux = resultadoArrayList.get(j);
-                    resultadoArrayList.set(j, resultadoArrayList.get(j + 1));
-                    resultadoArrayList.set(j + 1, aux);
-                }
-            }
-        }
-
-        return resultadoArrayList.toArray(new Medicion[0]);
+        return medicionesArraylist.stream().sorted(Comparator.comparing(Medicion::getFechaHora)).toArray(Medicion[]::new);
     }
 
     // Se crea un arreglo de mediciones para luego comparar las fechas de cada medicion con las fechas
@@ -97,10 +83,11 @@ public abstract class Sensor {
     }
 
     public Optional<ResumenMediciones> getResumenBetween(LocalDateTime inicio, LocalDateTime fin) throws MeteorologiaException {
-        Medicion[] mediciones = getMedicionesBetween(inicio, fin);
-        if (mediciones.length == 0) {
-            return Optional.empty();
-        }
+        Medicion[] mediciones = medicionesArraylist.stream()
+                .filter(m -> !m.getFechaHora().isBefore(inicio)
+                        && !m.getFechaHora().isAfter(fin))
+                .sorted(Comparator.comparing(Medicion::getFechaHora))
+                .toArray(Medicion[]::new);
         ResumenMediciones resumen = new ResumenMediciones(mediciones);
         return Optional.of(resumen);
     }
