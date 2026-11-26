@@ -25,24 +25,19 @@ public class Region {
     }
 
     public void addComuna(int cod, String nom) throws MeteorologiaException {
-        if (findComunaById(cod).isPresent()) {
-            throw new MeteorologiaException("La región " + nombre + " ya tiene una comuna con el código " + cod + ".");
+
+        if (comunas.stream().anyMatch(comuna -> comuna.getCodigo() == cod)) {
+            throw new MeteorologiaException("La región " + nombre + " ya tiene una comuna con el código "+ cod + ".");
         }
-        for (Comuna comuna : comunas) {
-            if (comuna.getNombre().equalsIgnoreCase(nom)) {
-                throw new MeteorologiaException("La región " + nombre + " ya tiene una comuna con el nombre " + nom + ".");
-            }
+
+        if (comunas.stream().anyMatch(comuna -> comuna.getNombre().equalsIgnoreCase(nom))) {
+            throw new MeteorologiaException("La región "+ nombre+ " ya tiene una comuna con el nombre "+ nom+ ".");
         }
         comunas.add(new Comuna(cod, nom, this));
     }
 
     public Optional<Comuna> findComunaById(int codigo){
-        for (Comuna comuna : comunas){
-            if(comuna.getCodigo() == codigo){
-                return Optional.of(comuna);
-            }
-        }
-        return Optional.empty();
+        return comunas.stream().filter(comuna -> comuna.getCodigo() == codigo).findFirst();
     }
 
     public Comuna[] getComunas(){

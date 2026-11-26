@@ -1,3 +1,4 @@
+//Fernanda López
 package Vista;
 
 import Controlador.InstitutoMeteorologia;
