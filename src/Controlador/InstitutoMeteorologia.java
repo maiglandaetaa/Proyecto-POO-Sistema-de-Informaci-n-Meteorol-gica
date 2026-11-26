@@ -414,4 +414,19 @@ public class InstitutoMeteorologia {
     private Optional<Sensor> findSensor(String codigoEstacion, String codigoSensor) {
         return findEstacion(codigoEstacion).flatMap(estacion -> estacion.findSensorById(codigoSensor));
     }
+
+    //Métodos nuevos 3er avance
+    public String[] getCodigosEstaciones() {
+        return estaciones.stream().map(EstacionMeteorologica::getCodigo).sorted().toArray(String[]::new);
+    }
+
+    public String[] getCodigosSensores(String codEstacion) throws MeteorologiaException {
+        Optional<EstacionMeteorologica> resultado = findEstacion(codEstacion);
+
+        if (resultado.isEmpty()) {
+            throw new MeteorologiaException("No existe una estació  con el código "+codEstacion+".");
+        }
+
+        return Arrays.stream(resultado.get().getSensores()).map(Sensor::getCodigo).toArray(String[]::new);
+    }
 }
