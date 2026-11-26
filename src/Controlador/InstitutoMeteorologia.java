@@ -261,95 +261,55 @@ public class InstitutoMeteorologia {
     }
 
     public String[][] listaRegiones() {
-        String[][] resultado = new String[regiones.size()][4];
-        int i=0;
-
-        for (Region region : regiones) { //por cada region devuelve:
-            resultado[i][0] = String.valueOf(region.getCodigo()); //cod
-            resultado[i][1] = region.getNombre();//nombre
-            resultado[i][2] = String.valueOf(region.getComunas().length);//comunas
-            resultado[i][3] = String.valueOf(region.getCantidadEstaciones());//cantidad de estaciones
-
-            i++;
-        }
-        return resultado;
+            return regiones.stream().map(region -> new String[] {
+                    String.valueOf(region.getCodigo()),
+                    region.getNombre(), String.valueOf(region.getComunas().length),
+                    String.valueOf(region.getCantidadEstaciones())
+            }).toArray(String[][]::new);
     }
 
     public String[][] listaComunas() {
-        ArrayList<String[]> resultado = new ArrayList<>();
-
-        for (Region region : regiones) {
-            for (Comuna comuna : region.getComunas()) {
-                String[] datos = new String[5];
-
-                datos[0] = String.valueOf(comuna.getCodigo());
-                datos[1] = String.valueOf(comuna.getNombre());
-                datos[2] = String.valueOf(comuna.getEstaciones().length);
-                datos[3] = String.valueOf(comuna.getCantidadEstacionesActivas());
-                datos[4] = String.valueOf(region.getNombre());
-                // Marce: Faltaba región ^^^
-                resultado.add(datos);
-            }
-        }
-        return resultado.toArray(new String[0][]);
+        return regiones.stream()
+                .flatMap(region -> Arrays.stream(region.getComunas())
+                        .map(comuna -> new String[] {
+                                String.valueOf(comuna.getCodigo()),
+                                String.valueOf(comuna.getNombre()),
+                                String.valueOf(comuna.getEstaciones().length),
+                                String.valueOf(comuna.getCantidadEstacionesActivas()),
+                                region.getNombre()
+                        }))
+                .toArray(String[][]::new);
     }
 
     public String[][] listaEstaciones(int codigoRegion, int codigoComuna) {
-        for (Region region : regiones) {
-            if (region.getCodigo() == codigoRegion) {
-                Optional<Comuna> comunaEncontrada = region.findComunaById(codigoComuna);
+        Optional<Comuna> comunaEncontrada = findComuna(codigoRegion, codigoComuna);
 
-                if (comunaEncontrada.isEmpty()) {return new String[0][0];}
-
-                Comuna comuna = comunaEncontrada.get();
-                ArrayList<String[]> resultado = new ArrayList<>();
-
-                for (EstacionMeteorologica estacion : estaciones) {
-                    String[] datos = estacion.toString().split("; ");
-                    String codigoEstacion = datos[0];
-
-                    Optional<EstacionMeteorologica> encontrada = comuna.findEstacionById(codigoEstacion);
-
-                    if (encontrada.isPresent()) {
-                        int sensoresActivos = 0;
-
-                        for (Sensor sensor : estacion.getSensores()) {
-                            if (sensor.getEstado() == Estado.ACTIVO) {
-                                sensoresActivos++;
-                            }
-                        }
-
-                        datos[4] = String.valueOf(sensoresActivos);
-                        resultado.add(datos);
-                    }
-                }
-                return resultado.toArray(new String[0][]);
-            }
+        if (comunaEncontrada.isEmpty()) {
+            return new String[0][0];
         }
-        return new String[0][0];
+
+        Comuna comuna = comunaEncontrada.get();
+
+        return estaciones.stream().filter(estacion -> comuna.findEstacionById(estacion.getCodigo()).isPresent())
+                .map(estacion -> {
+                    String[] datos = estacion.toString().split(";");
+                    long sensoresActivos = Arrays.stream(estacion.getSensores())
+                            .filter(sensor -> sensor.getEstado() == Estado.ACTIVO)
+                            .count();
+                    datos[4] = String.valueOf(sensoresActivos);
+                    return datos;
+                }).toArray(String[][]::new);
     }
 
     public String[][] listaSensores(String codigoEstacion) {
-        for (EstacionMeteorologica estacion : estaciones) {
-            String codigoEstacionActual = estacion.toString().split(";")[0];
-
-            if (codigoEstacionActual.equals(codigoEstacion)) {
-                return estacion.getResumenSensores();
-            }
-        }
-        return new String[0][0];
+        return estaciones.stream().filter(estacion -> estacion.toString().split(";")[0].equals(codigoEstacion))
+                .findFirst().map(EstacionMeteorologica::getResumenSensores).orElseGet(() -> new String[0][0]);
     }
 
     public String [][] listaMediciones(String codEstacion, String codSensor, LocalDateTime inicio, LocalDateTime fin) {
-        for (EstacionMeteorologica estacion: estaciones) {
-            String codigoEstacionActual = estacion.toString().split(";")[0];
-
-            if (codigoEstacionActual.equals(codEstacion)) {
-                return estacion.getMedicionesSensorBetween(codSensor, inicio, fin);
-            }
-        }
-
-        return new String[0][0];
+        return estaciones.stream().filter(estacion -> estacion.toString().split(";")[0].equals(codEstacion))
+                .findFirst().map(estacion -> estacion.getMedicionesSensorBetween(codSensor, inicio, fin))
+                .orElseGet(() -> new String[0][0]);
     }
 
     public String[] listaResumenMediciones(String codigoEstacion, String codigoSensor, LocalDateTime inicio, LocalDateTime fin) throws MeteorologiaException {
@@ -423,28 +383,20 @@ public class InstitutoMeteorologia {
 
         AlertaMeteorologica[] alertas = estacion.getAlertasBetween(inicio, fin);
 
-        if (alertas.length == 0) {
-            return new String [0][0];
-        }
-
-        Arrays.sort(alertas, Comparator.comparing(AlertaMeteorologica::getFechaHora));
-
-        String[][] resultado = new String[alertas.length][7];
-
-        for (int i = 0; i < alertas.length; i++) {
-            AlertaMeteorologica alerta = alertas[i];
-            Sensor sensor = alerta.getSensor();
-
-            resultado[i][0] = alerta.getFechaHora().format(formatoFecha);
-            resultado[i][1] = alerta.getFechaHora().format(formatoHora);
-            resultado[i][2] = sensor.getCodigo();
-            resultado[i][3] = alerta.getFenomeno();
-            resultado[i][4] = String.format(java.util.Locale.US, "%.1f", alerta.getValor());
-            resultado[i][5] = sensor.getUnidad();
-            resultado[i][6] = alerta.getNivel().toString();
-        }
-
-        return resultado;
+        return Arrays.stream(alertas)
+                .sorted(Comparator.comparing(AlertaMeteorologica::getFechaHora))
+                .map(alerta -> {Sensor sensor = alerta.getSensor();
+                    return new String[] {
+                            alerta.getFechaHora().format(formatoFecha),
+                            alerta.getFechaHora().format(formatoHora),
+                            sensor.getCodigo(),
+                            alerta.getFenomeno(),
+                            String.format(java.util.Locale.US, "%.1f", alerta.getValor()),
+                            sensor.getUnidad(),
+                            alerta.getNivel().toString()
+                    };
+                })
+                .toArray(String[][]::new);
     }
 
     private Optional<EstacionMeteorologica> findEstacion(String codigo) {
