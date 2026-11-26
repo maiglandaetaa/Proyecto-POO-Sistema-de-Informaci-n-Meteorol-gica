@@ -1,13 +1,16 @@
+//Fernanda López
 package Modelo;
 
 import Controlador.MeteorologiaException;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Optional;
 
-public class EstacionMeteorologica {
+public class EstacionMeteorologica implements Serializable {
     private String codigo;
     private String nombre;
     private float longitud;
@@ -18,6 +21,7 @@ public class EstacionMeteorologica {
     private Comuna comuna;
     private ArrayList<Sensor> sensores;
     private ArrayList<AlertaMeteorologica> alertas;
+    private static final long serialVersionUID = 1L;
 
     public EstacionMeteorologica(String cod, String nombre, float lon, float lat, float alt, Comuna comuna) {
         codigo = cod;
@@ -59,35 +63,28 @@ public class EstacionMeteorologica {
 
         //No se creara si no se encuentra activo
         if (estado != Estado.ACTIVO) {
-            throw new MeteorologiaException("La estación "+codigo+" no esta activa.");
+            throw new MeteorologiaException("La estación "+ getCodigo() +" no esta activa.");
         }
 
-        for (Sensor sensor : sensores) {
-            //No se crea si ya existe un sensor con el mismo código
-            if (sensor.getCodigo().equals(codigo)) {
-                throw new MeteorologiaException("La estación "+codigo+" ya tiene un sensor con el código "+sensor.getCodigo());
-            }
+        // Comprobar código duplicado
+        if (sensores.stream().anyMatch(sensor ->
+                sensor.getCodigo().equals(codigo))) {
+            throw new MeteorologiaException("La estación " + getCodigo() +
+                    " ya tiene un sensor con el código " + codigo);
+        }
 
-            /* Marce: Se deben cumplir ambas condiciones para no añadirlo -> ||xx , &&oo
-                Si el tipo del nuevo sensor es X, y el sensor revisado ya es X, no crear */
-            //No lo crea si ya hay un sensor activo del mismo tipo
-            if (sensor.getEstado() == Estado.ACTIVO) {
-                if (tipo == TipoSensor.HUMEDAD && sensor instanceof SensorHumedad) {
-                    throw new MeteorologiaException("La estación "+ codigo+" ya tiene un sensor ACTIVO de tipo "+tipo);
-                }
-                if (tipo == TipoSensor.TEMPERATURA && sensor instanceof SensorTemperatura) {
-                    throw new MeteorologiaException("La estación "+ codigo+" ya tiene un sensor ACTIVO de tipo "+tipo);
-                }
-                if (tipo == TipoSensor.PRESION && sensor instanceof SensorPresion) {
-                    throw new MeteorologiaException("La estación "+ codigo+" ya tiene un sensor ACTIVO de tipo "+tipo);
-                }
-                if (tipo == TipoSensor.VIENTO && sensor instanceof SensorViento) {
-                    throw new MeteorologiaException("La estación "+ codigo+" ya tiene un sensor ACTIVO de tipo "+tipo);
-                }
-                if (tipo == TipoSensor.PRECIPITACION && sensor instanceof SensorPrecipitacion) {
-                    throw new MeteorologiaException("La estación "+ codigo+" ya tiene un sensor ACTIVO de tipo "+tipo);
-                }
-            }
+        // Comprobar sensor activo del mismo tipo
+        if (sensores.stream().anyMatch(sensor ->
+                sensor.getEstado() == Estado.ACTIVO &&
+                        (
+                                (tipo == TipoSensor.HUMEDAD && sensor instanceof SensorHumedad) ||
+                                        (tipo == TipoSensor.TEMPERATURA && sensor instanceof SensorTemperatura) ||
+                                        (tipo == TipoSensor.PRESION && sensor instanceof SensorPresion) ||
+                                        (tipo == TipoSensor.VIENTO && sensor instanceof SensorViento) ||
+                                        (tipo == TipoSensor.PRECIPITACION && sensor instanceof SensorPrecipitacion)
+                        ))) {
+            throw new MeteorologiaException("La estación " + getCodigo() +
+                    " ya tiene un sensor ACTIVO de tipo " + tipo);
         }
 
         Sensor sensor = null;
@@ -100,36 +97,28 @@ public class EstacionMeteorologica {
         }
         sensores.add(sensor);
     }
-    public void cambiaEstadoSensor(String codigo, String marca, String modelo, TipoSensor tipo) throws MeteorologiaException {
-        boolean encontrado = false;
-        for (Sensor sensor : sensores) {
-            if (sensor.getCodigo().equals(codigo) && sensor.getMarca().equals(marca) && sensor.getModelo().equals(modelo) && sensor.getTipo() == tipo) {
-                encontrado = true;
 
-                if (sensor.getEstado() == Estado.ACTIVO) {
-                    sensor.setEstado(Estado.INACTIVO);
-                } else {
-                    boolean existeActivo = false;
-                    for (Sensor otro : sensores) {
-                        if (otro != sensor && otro.getTipo() == tipo && otro.getEstado() == Estado.ACTIVO) {
-                            existeActivo = true;
-                            break;
-                        }
-                    }
 
-                    if (existeActivo) {
-                        throw new MeteorologiaException("Ya existe un sensor activo de tipo "+tipo);
-                    }
-                    sensor.setEstado(Estado.ACTIVO);
-                }
-                break;
+    public void cambiaEstadoSensor(String codigo, String marca, String modelo, TipoSensor tipo, Estado nuevoEstado) throws MeteorologiaException {
+        Optional<Sensor> sensorEncontrado = sensores.stream().filter(sensor -> sensor.getCodigo().equals(codigo) && sensor.getMarca().equals(marca) & sensor.getModelo().equals(modelo) && sensor.getTipo() == tipo).findFirst();
+
+        if (sensorEncontrado.isEmpty()) {
+            throw new MeteorologiaException("No existe un sensor con el código " + codigo);
+        }
+        Sensor sensor = sensorEncontrado.get();
+        if (sensor.getEstado() == nuevoEstado) {
+            throw new MeteorologiaException("El sensor " + codigo + " ya se encuentra en estado " + nuevoEstado);
+        }
+        if (nuevoEstado == Estado.ACTIVO) {
+            boolean existeActivo = sensores.stream().anyMatch(otro -> otro != sensor && otro.getTipo() == tipo && otro.getEstado() == Estado.ACTIVO);
+            if (existeActivo) {
+                throw new MeteorologiaException("Ya existe un sensor activo de tipo " + tipo);
             }
         }
-
-        if (!encontrado) {
-            throw new MeteorologiaException("No existe un sensor con el código "+codigo);
-        }
+        sensor.setEstado(nuevoEstado);
     }
+
+
     public void registraMedicion(LocalDateTime fechaHora, float valor, String codigoSensor) throws MeteorologiaException{
         if (estado != Estado.ACTIVO) {
             throw new MeteorologiaException("La estacion "+this.getCodigo()+" no está activa.");
@@ -157,7 +146,7 @@ public class EstacionMeteorologica {
         }
 
         if (!encontrada) {
-            throw new MeteorologiaException("El sensor"+codigoSensor+" no existe en la estación "+this.getCodigo()+".");
+            throw new MeteorologiaException("El sensor "+codigoSensor+" no existe en la estación "+this.getCodigo()+".");
         }
 
     }
@@ -165,6 +154,7 @@ public class EstacionMeteorologica {
     public String toString () {
         return codigo + "; " + nombre + "; (" + longitud + ", " + latitud + ", " + altitud + "); " + estado + "; " + sensores.size();
     }
+
     public Sensor[] getSensores() { //no no tengo idea wei me quiero ir a acostar me duele la cabeza me voy a morir, perdon equipo hoy fallé
         Sensor[] sensor = new Sensor[sensores.size()];
 
@@ -193,7 +183,8 @@ public class EstacionMeteorologica {
                 datos[i][6] = "Sin mediciones.";
             } else {
                 Medicion ultima = mediciones[mediciones.length - 1];
-                datos[i][6] = ultima.toString() + " " + sensor.getUnidad();
+                DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                datos[i][6] = ultima.getFechaHora().format(formato) + " " + ultima.getValor() + " " + sensor.getUnidad();
             }
 
         }
@@ -224,30 +215,12 @@ public class EstacionMeteorologica {
     }
 
     public AlertaMeteorologica[] getAlertasBetween(LocalDateTime inicio, LocalDateTime fin) {
-        ArrayList<AlertaMeteorologica> resultado = new ArrayList<>();
-        for (AlertaMeteorologica alerta : alertas) {
-            LocalDateTime fecha = alerta.getFechaHora();
-
-            if (!fecha.isBefore(inicio) && !fecha.isAfter(fin)) {
-                resultado.add(alerta);
-            }
-        }
-        return resultado.toArray(new AlertaMeteorologica[0]);
+        return alertas.stream().filter(alerta -> {LocalDateTime fecha = alerta.getFechaHora();
+            return !fecha.isBefore(inicio) && !fecha.isAfter(fin);}).sorted(Comparator.comparing(AlertaMeteorologica::getFechaHora))
+                .toArray(AlertaMeteorologica[]::new);
     }
 
     public Optional<Sensor> findSensorById(String codigo) {
-        Sensor sensorEncontrado = null;
-        boolean encontrado = false;
-        for (Sensor sensor : sensores) {
-            if (sensor.getCodigo().equals(codigo)) {
-                sensorEncontrado = sensor;
-                encontrado = true;
-                break;
-            }
-        }
-        if (encontrado) {
-            return Optional.of(sensorEncontrado);
-        }
-        return Optional.empty();
+        return sensores.stream().filter(sensor -> sensor.getCodigo().equals(codigo)).findFirst();
     }
 }
