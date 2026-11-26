@@ -379,9 +379,9 @@ public class InterfazUsuario {
         }
 
         System.out.println("\nESTACIONES METEOROLÓGICAS");
-        System.out.println("-------------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------------------------------------------");
         System.out.printf("%-20s %-25s %-35s %-15s %-25s%n", "Código", "Nombre", "Ubicación", "Estado", "Sensores operativos");
-        System.out.println("-------------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------------------------------------------");
 
         for (String[] estacion : estaciones) {
             System.out.printf("%-20s %-25s %-35s %-15s %-25s%n", estacion[0], estacion[1], estacion[2], estacion[3], estacion[4]);
@@ -408,7 +408,7 @@ public class InterfazUsuario {
 
         System.out.println("\nSENSORES");
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.printf("%-15s %-20s %-20s %-20s %-20s %-20s %-20s%n", "Código", "Tipo", "Marca", "Modelo", "Unidad", "Modelo.Estado", "Última medición");
+        System.out.printf("%-15s %-20s %-20s %-20s %-20s %-20s %-20s%n", "Código", "Tipo", "Marca", "Modelo", "Unidad", "Modelo", "Última medición");
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
 
         for (String[] sensor : sensores) {
