@@ -380,11 +380,11 @@ public class InterfazUsuario {
 
         System.out.println("\nESTACIONES METEOROLÓGICAS");
         System.out.println("-------------------------------------------------------------------------------------");
-        System.out.printf("%-20s %-25s %-25s %-25s%n", "Código", "Nombre y ubicación", "Modelo.Estado", "Sensores");
+        System.out.printf("%-20s %-25s %-35s %-15s %-25s%n", "Código", "Nombre", "Ubicación", "Estado", "Sensores operativos");
         System.out.println("-------------------------------------------------------------------------------------");
 
         for (String[] estacion : estaciones) {
-            System.out.printf("%-20s %-25s %-25s %-25s%n", estacion[0], estacion[1], estacion[2], estacion[3]);
+            System.out.printf("%-20s %-25s %-35s %-15s %-25s%n", estacion[0], estacion[1], estacion[2], estacion[3], estacion[4]);
         }
     }
 

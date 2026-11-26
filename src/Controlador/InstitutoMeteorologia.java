@@ -6,6 +6,7 @@ import Modelo.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.*;
 
 public class InstitutoMeteorologia {
@@ -151,7 +152,7 @@ public class InstitutoMeteorologia {
         List<String[]> registrosSensores = PersistenciaTexto.leeRegistros("sensores.txt");
         List<String[]> registrosMediciones = PersistenciaTexto.leeRegistros("mediciones.txt");
 
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm").withResolverStyle(ResolverStyle.STRICT);
 
         List<String[]> sensoresActivos = new ArrayList<>();
         try {
@@ -229,10 +230,10 @@ public class InstitutoMeteorologia {
                 .flatMap(region -> Arrays.stream(region.getComunas())
                         .map(comuna -> new String[] {
                                 String.valueOf(comuna.getCodigo()),
-                                String.valueOf(comuna.getNombre()),
+                                comuna.getNombre(),
+                                region.getNombre(),
                                 String.valueOf(comuna.getEstaciones().length),
-                                String.valueOf(comuna.getCantidadEstacionesActivas()),
-                                region.getNombre()
+                                String.valueOf(comuna.getCantidadEstacionesActivas())
                         }))
                 .toArray(String[][]::new);
     }
@@ -285,7 +286,7 @@ public class InstitutoMeteorologia {
             DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
             throw new MeteorologiaException("La fecha y hora de término (" + fin.format(formato) + ") es anterior a la de inicio (" + inicio.format(formato) + ").");
         }
-        return Arrays.stream(resultadoSensor.get().getMedicionesBetween(inicio, fin)).map(medicion -> medicion.toString().split(";")).toArray(String[][]::new);
+        return resultadoEstacion.get().getMedicionesSensorBetween(codSensor, inicio, fin);
     }
 
     public String[] listaResumenMediciones(String codigoEstacion, String codigoSensor, LocalDateTime inicio, LocalDateTime fin) throws MeteorologiaException {

@@ -29,7 +29,6 @@ public class VentanaPrincipal extends JFrame {
     private JLabel labelEstado;
 
     private InstitutoMeteorologia instituto = InstitutoMeteorologia.getInstance();
-    ;
     private InterfazUsuario interfaz = InterfazUsuario.getInstance();
 
     public VentanaPrincipal() {
@@ -189,6 +188,7 @@ public class VentanaPrincipal extends JFrame {
             actualizarEstado();
         } catch (MeteorologiaException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            actualizarEstado();
         }
     }
 
@@ -196,8 +196,10 @@ public class VentanaPrincipal extends JFrame {
         try {
             instituto.guardaDatos();
             JOptionPane.showMessageDialog(this, "Datos guardados correctamente.", "Mensaje", JOptionPane.INFORMATION_MESSAGE);
+            actualizarEstado();
         } catch (MeteorologiaException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            actualizarEstado();
         }
     }
 
@@ -357,6 +359,7 @@ public class VentanaPrincipal extends JFrame {
         defaultComboBoxModel1.addElement("Sensores de una estación");
         defaultComboBoxModel1.addElement("Mediciones de un sensor");
         defaultComboBoxModel1.addElement("Resumen estadístico de un sensor");
+        defaultComboBoxModel1.addElement("Alertas de una estación");
         comboBoxListados.setModel(defaultComboBoxModel1);
         panel6.add(comboBoxListados, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
@@ -392,4 +395,5 @@ public class VentanaPrincipal extends JFrame {
     public JComponent $$$getRootComponent$$$() {
         return contentPane;
     }
+
 }

@@ -183,7 +183,8 @@ public class EstacionMeteorologica implements Serializable {
                 datos[i][6] = "Sin mediciones.";
             } else {
                 Medicion ultima = mediciones[mediciones.length - 1];
-                datos[i][6] = ultima.toString() + " " + sensor.getUnidad();
+                DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                datos[i][6] = ultima.getFechaHora().format(formato) + " " + ultima.getValor() + " " + sensor.getUnidad();
             }
 
         }

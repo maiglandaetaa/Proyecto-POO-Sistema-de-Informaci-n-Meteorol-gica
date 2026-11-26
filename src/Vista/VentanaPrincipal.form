@@ -194,6 +194,7 @@
                     <item value="Sensores de una estación"/>
                     <item value="Mediciones de un sensor"/>
                     <item value="Resumen estadístico de un sensor"/>
+                    <item value="Alertas de una estación"/>
                   </model>
                 </properties>
               </component>
