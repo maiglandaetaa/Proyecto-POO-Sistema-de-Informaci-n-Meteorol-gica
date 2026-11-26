@@ -3,8 +3,12 @@ package Modelo;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.io.Serializable;
 
-public class Comuna {
+public class Comuna implements Serializable{
+
+    private static final long serialVersionUID = 1L;
+
     private int codigo;
     private String nombre;
     private Region region;
@@ -25,6 +29,10 @@ public class Comuna {
         return nombre;
     }
 
+    public Region getRegion(){
+        return region;
+    }
+
     public void addEstacion(EstacionMeteorologica estacion){
         estaciones.add(estacion);
     }
@@ -33,21 +41,13 @@ public class Comuna {
         return estaciones.stream().filter(estacion -> estacion.getCodigo().equals(codigo)).findFirst();
     }
 
-    public Region getRegion(){
-        return region;
-    }
-
     public EstacionMeteorologica[] getEstaciones(){
         return estaciones.toArray(new EstacionMeteorologica[0]);
     }
 
     public int getCantidadEstacionesActivas(){
-        int CantEstActivas = 0;
-        for(EstacionMeteorologica estacion : estaciones){
-            if (estacion.getEstado() == Estado.ACTIVO){
-                CantEstActivas++;
-            }
-        }
-        return CantEstActivas;
+        return (int) estaciones.stream()
+                .filter(estacion ->estacion.getEstado() == Estado.ACTIVO)
+                .count();
     }
 }

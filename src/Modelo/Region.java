@@ -4,8 +4,12 @@ package Modelo;
 import java.util.ArrayList;
 import Controlador.MeteorologiaException;
 import java.util.Optional;
+import java.io.Serializable;
 
-public class Region {
+public class Region implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private int codigo;
     private String nombre;
     private ArrayList<Comuna> comunas;
@@ -25,7 +29,6 @@ public class Region {
     }
 
     public void addComuna(int cod, String nom) throws MeteorologiaException {
-
         if (comunas.stream().anyMatch(comuna -> comuna.getCodigo() == cod)) {
             throw new MeteorologiaException("La región " + nombre + " ya tiene una comuna con el código "+ cod + ".");
         }
@@ -45,11 +48,6 @@ public class Region {
     }
 
     public int getCantidadEstaciones(){
-        int total =0;
-        for(Comuna comuna : comunas){
-            total+=comuna.getEstaciones().length;
-        }
-        return total;
+      return comunas.stream().mapToInt(comuna -> comuna.getEstaciones().length).sum();
     }
-
 }

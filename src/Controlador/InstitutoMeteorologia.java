@@ -161,42 +161,28 @@ public class InstitutoMeteorologia {
     }
 
     public void guardaDatos() throws MeteorologiaException {
-        ArrayList<String> lineasRegiones = new ArrayList<>();
-        ArrayList<String> lineasComunas = new ArrayList<>();
-        ArrayList<String> lineasEstaciones = new ArrayList<>();
-        ArrayList<String> lineasSensores = new ArrayList<>();
-        ArrayList<String> lineasMediciones = new ArrayList<>();
-
-        for (Region region : regiones) {
-            lineasRegiones.add(region.getCodigo()+ ";" +region.getNombre());
-
-            for (Comuna comuna : region.getComunas()) {
-                lineasComunas.add(region.getCodigo()+";"+comuna.getCodigo()+";"+comuna.getNombre());
-            }
-        }
-
-        for (EstacionMeteorologica estacion : estaciones) {
-            String[] posicion = estacion.getPosicion().replace("(", "").replace(")", "").split(";");
-
-            lineasEstaciones.add(estacion.getCodigo()+";"+estacion.getNombre()+";"+posicion[0]+";"+posicion[1]+";"+posicion[2]+";"+estacion.getComuna().getRegion().getCodigo()+";"+estacion.getComuna().getCodigo());
-
-            for (Sensor sensor : estacion.getSensores()) {
-                lineasSensores.add(estacion.getCodigo()+";"+sensor.getCodigo()+";"+sensor.getTipo()+";"+sensor.getMarca()+";"+sensor.getModelo()+";"+sensor.getEstado());
-
-                for (Medicion medicion : sensor.getMediciones()) {
-                    lineasMediciones.add(estacion.getCodigo()+";"+sensor.getCodigo()+";"+medicion.getFechaHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))+";"+medicion.getValor());
-                }
-            }
-        }
-
-        PersistenciaTexto.escribeRegistros("regiones.txt", lineasRegiones);
-        PersistenciaTexto.escribeRegistros("comunas.txt", lineasComunas);
-        PersistenciaTexto.escribeRegistros("estaciones.txt", lineasEstaciones);
-        PersistenciaTexto.escribeRegistros("sensores.txt", lineasSensores);
-        PersistenciaTexto.escribeRegistros("mediciones.txt", lineasMediciones);
+       if (regiones.isEmpty()) {
+           throw new MeteorologiaException("No existen datos para guardar");
+       }
+       PersistenciaObjetos.escribeObjeto("meteorologia.dat", regiones);
     }
 
     public void cargaDatos() throws MeteorologiaException {
+        if (!regiones.isEmpty()) {
+            throw new MeteorologiaException("La carga de datos solo puede realizarse cuando no existen datos registrados.");
+        }
+        Object objeto = PersistenciaObjetos.leeObjeto("meteorologia.dat");
+        if (!(objeto instanceof List)) {
+            throw new MeteorologiaException("El archivo meteorologia.dat no contiene datos válidos del sistema.");
+        }
+        regiones = new ArrayList<>((List<Region>) objeto);
+        estaciones = regiones.stream()
+                .flatMap(region -> Arrays.stream(region.getComunas()))
+                .flatMap(comuna -> Arrays.stream(comuna.getEstaciones()))
+                .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
+    }
+
+    public void importaDatosTexto() throws MeteorologiaException {
         List<String[]> registrosRegiones = PersistenciaTexto.leeRegistros("regiones.txt");
         for (String[] registro : registrosRegiones) {
             int codigo = Integer.parseInt(registro[0]);
