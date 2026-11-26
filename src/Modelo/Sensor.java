@@ -46,7 +46,7 @@ public abstract class Sensor {
         this.estado = estado;
     }
 
-    // Avance 2: Modificación excepción
+    // Avance 3: Ciclos con lambda
     public void addMedicion(LocalDateTime fechaHora, float valor) throws MeteorologiaException {
         if (!esValorAdmisible(valor) || estado != Estado.ACTIVO) {
             throw new MeteorologiaException("Medición no pudo ser registrada.");
@@ -58,7 +58,7 @@ public abstract class Sensor {
         medicionesArraylist.add(new Medicion(fechaHora, valor));
     }
 
-    // Adicion Avance 2: Algoritmo burbuja, recurso de uso en trello
+    // Avance 3: Ciclos con lambda
     public Medicion[] getMediciones() {
         return medicionesArraylist.stream().sorted(Comparator.comparing(Medicion::getFechaHora)).toArray(Medicion[]::new);
     }
@@ -73,11 +73,11 @@ public abstract class Sensor {
     }
 
     public Optional<ResumenMediciones> getResumenBetween(LocalDateTime inicio, LocalDateTime fin) throws MeteorologiaException {
-        Medicion[] mediciones = medicionesArraylist.stream().filter(medicion -> {LocalDateTime fecha = medicion.getFechaHora();
-            return !fecha.isBefore(inicio) && !fecha.isAfter(fin);}).sorted(Comparator.comparing(Medicion::getFechaHora)).toArray(Medicion[]::new);
-        if (mediciones.length == 0) {
-            return Optional.empty();
-        }
+        Medicion[] mediciones = medicionesArraylist.stream()
+                .filter(m -> !m.getFechaHora().isBefore(inicio)
+                        && !m.getFechaHora().isAfter(fin))
+                .sorted(Comparator.comparing(Medicion::getFechaHora))
+                .toArray(Medicion[]::new);
         ResumenMediciones resumen = new ResumenMediciones(mediciones);
         return Optional.of(resumen);
     }
