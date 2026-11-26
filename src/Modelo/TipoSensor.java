@@ -2,8 +2,8 @@ package Modelo;
 
 // Marcela Landaeta
 public enum TipoSensor {
-    HUMEDAD,
     TEMPERATURA,
+    HUMEDAD,
     PRESION,
     VIENTO,
     PRECIPITACION

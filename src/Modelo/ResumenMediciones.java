@@ -17,8 +17,9 @@ public class ResumenMediciones {
         }
         this.cantidad = mediciones.length;
 
-        this.minima = Arrays.stream(mediciones).min(Comparator.comparing(Medicion::getValor)).get();
-        this.maxima = Arrays.stream(mediciones).max(Comparator.comparing(Medicion::getValor).thenComparing(Medicion::getFechaHora, Comparator.reverseOrder())).get();
+        Comparator<Medicion> comparador = Comparator.comparing(Medicion::getValor).thenComparing(Medicion::getFechaHora);
+        this.minima = Arrays.stream(mediciones).min(comparador).get();
+        this.maxima = Arrays.stream(mediciones).max(comparador).get();
         this.promedio = (float) Arrays.stream(mediciones).mapToDouble(Medicion::getValor).average().orElse(0);
     }
 

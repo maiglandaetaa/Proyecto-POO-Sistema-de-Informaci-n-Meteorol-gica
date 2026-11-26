@@ -29,12 +29,12 @@ public class PersistenciaObjetos {
     public static Object leeObjeto(String nombreArchivo) throws MeteorologiaException{
         File archivo = new File(CARPETA + "/" + nombreArchivo);
         if(!archivo.exists()){
-            throw new MeteorologiaException("No se encontró el archivo" + nombreArchivo + ".");
+            throw new MeteorologiaException("No se encontró el archivo " + nombreArchivo + ".");
         }
         try (ObjectInputStream lector = new ObjectInputStream(new FileInputStream(archivo))){
             return lector.readObject();
         } catch (IOException | ClassNotFoundException e){
-            throw new MeteorologiaException("No fue posible leer el archivo" + nombreArchivo + ".");
+            throw new MeteorologiaException("No fue posible leer el archivo " + nombreArchivo + ".");
         }
     }
 }

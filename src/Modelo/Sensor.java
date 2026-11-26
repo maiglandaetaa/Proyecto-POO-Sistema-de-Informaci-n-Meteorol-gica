@@ -2,6 +2,7 @@ package Modelo;// Marcela Landaeta
 
 import Controlador.MeteorologiaException;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -10,11 +11,12 @@ import java.util.Optional;
 // Uso de polimorfismo, al momento de hacer algun ArrayList de sensor (superclase),
 //      se pueden guardar sus subclases en el (temperatura, humedad, etc)
 
-public abstract class Sensor {
+public abstract class Sensor implements Serializable {
     private String codigo, marca, modelo;
     private Estado estado;
     private EstacionMeteorologica estacion; // Relación con Modelo.EstacionMeteorologica
     private ArrayList<Medicion> medicionesArraylist; // Guardar multiples mediciones por 0...*
+    private static final long serialVersionUID = 1L;
 
     protected Sensor(String codigo, String marca, String modelo, EstacionMeteorologica estacion) {
         this.codigo = codigo;
@@ -78,8 +80,12 @@ public abstract class Sensor {
                         && !m.getFechaHora().isAfter(fin))
                 .sorted(Comparator.comparing(Medicion::getFechaHora))
                 .toArray(Medicion[]::new);
-        ResumenMediciones resumen = new ResumenMediciones(mediciones);
-        return Optional.of(resumen);
+
+        if (mediciones.length == 0) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new ResumenMediciones(mediciones));
     }
 
     public abstract TipoSensor getTipo();

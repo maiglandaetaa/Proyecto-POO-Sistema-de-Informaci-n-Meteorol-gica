@@ -3,13 +3,14 @@ package Modelo;
 
 import Controlador.MeteorologiaException;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Optional;
 
-public class EstacionMeteorologica {
+public class EstacionMeteorologica implements Serializable {
     private String codigo;
     private String nombre;
     private float longitud;
@@ -20,6 +21,7 @@ public class EstacionMeteorologica {
     private Comuna comuna;
     private ArrayList<Sensor> sensores;
     private ArrayList<AlertaMeteorologica> alertas;
+    private static final long serialVersionUID = 1L;
 
     public EstacionMeteorologica(String cod, String nombre, float lon, float lat, float alt, Comuna comuna) {
         codigo = cod;
@@ -61,13 +63,13 @@ public class EstacionMeteorologica {
 
         //No se creara si no se encuentra activo
         if (estado != Estado.ACTIVO) {
-            throw new MeteorologiaException("La estación "+codigo+" no esta activa.");
+            throw new MeteorologiaException("La estación "+ getCodigo() +" no esta activa.");
         }
 
         // Comprobar código duplicado
         if (sensores.stream().anyMatch(sensor ->
                 sensor.getCodigo().equals(codigo))) {
-            throw new MeteorologiaException("La estación " + codigo +
+            throw new MeteorologiaException("La estación " + getCodigo() +
                     " ya tiene un sensor con el código " + codigo);
         }
 
@@ -81,7 +83,7 @@ public class EstacionMeteorologica {
                                         (tipo == TipoSensor.VIENTO && sensor instanceof SensorViento) ||
                                         (tipo == TipoSensor.PRECIPITACION && sensor instanceof SensorPrecipitacion)
                         ))) {
-            throw new MeteorologiaException("La estación " + codigo +
+            throw new MeteorologiaException("La estación " + getCodigo() +
                     " ya tiene un sensor ACTIVO de tipo " + tipo);
         }
 
@@ -96,30 +98,26 @@ public class EstacionMeteorologica {
         sensores.add(sensor);
     }
 
-    public void cambiaEstadoSensor(String codigo, String marca, String modelo, TipoSensor tipo) throws MeteorologiaException {
-        Optional<Sensor> sensorEncontrado = sensores.stream().filter(sensor -> sensor.getCodigo().equals(codigo) && sensor.getMarca().equals(marca) &&
-                                sensor.getModelo().equals(modelo) && sensor.getTipo() == tipo)
-                .findFirst();
+
+    public void cambiaEstadoSensor(String codigo, String marca, String modelo, TipoSensor tipo, Estado nuevoEstado) throws MeteorologiaException {
+        Optional<Sensor> sensorEncontrado = sensores.stream().filter(sensor -> sensor.getCodigo().equals(codigo) && sensor.getMarca().equals(marca) & sensor.getModelo().equals(modelo) && sensor.getTipo() == tipo).findFirst();
 
         if (sensorEncontrado.isEmpty()) {
             throw new MeteorologiaException("No existe un sensor con el código " + codigo);
         }
-
         Sensor sensor = sensorEncontrado.get();
-
-        if (sensor.getEstado() == Estado.ACTIVO) {
-            sensor.setEstado(Estado.INACTIVO);
-        } else {
-            boolean existeActivo = sensores.stream().anyMatch(otro -> otro != sensor &&
-                                    otro.getTipo() == tipo && otro.getEstado() == Estado.ACTIVO);
-
+        if (sensor.getEstado() == nuevoEstado) {
+            throw new MeteorologiaException("El sensor " + codigo + " ya se encuentra en estado " + nuevoEstado);
+        }
+        if (nuevoEstado == Estado.ACTIVO) {
+            boolean existeActivo = sensores.stream().anyMatch(otro -> otro != sensor && otro.getTipo() == tipo && otro.getEstado() == Estado.ACTIVO);
             if (existeActivo) {
                 throw new MeteorologiaException("Ya existe un sensor activo de tipo " + tipo);
             }
-
-            sensor.setEstado(Estado.ACTIVO);
         }
+        sensor.setEstado(nuevoEstado);
     }
+
 
     public void registraMedicion(LocalDateTime fechaHora, float valor, String codigoSensor) throws MeteorologiaException{
         if (estado != Estado.ACTIVO) {
@@ -148,7 +146,7 @@ public class EstacionMeteorologica {
         }
 
         if (!encontrada) {
-            throw new MeteorologiaException("El sensor"+codigoSensor+" no existe en la estación "+this.getCodigo()+".");
+            throw new MeteorologiaException("El sensor "+codigoSensor+" no existe en la estación "+this.getCodigo()+".");
         }
 
     }

@@ -3,6 +3,7 @@ package Vista;
 
 import Controlador.InstitutoMeteorologia;
 import Controlador.MeteorologiaException;
+import Modelo.Estado;
 import Modelo.TipoSensor;
 
 import java.time.LocalDateTime;
@@ -232,8 +233,24 @@ public class InterfazUsuario {
         System.out.print("Código del sensor: ");
         String codSensor = sc.next();
 
+        System.out.println("Seleccione el nuevo estado:");
+        System.out.println("1. ACTIVO");
+        System.out.println("2. INACTIVO");
+        System.out.print("Opción: ");
+        int opcion = sc.nextInt();
+
+        Estado nuevoEstado;
+        if (opcion == 1) {
+            nuevoEstado = Estado.ACTIVO;
+        } else if (opcion == 2) {
+            nuevoEstado = Estado.INACTIVO;
+        } else {
+            System.out.println("Opción no válida.");
+            return;
+        }
+
         try {
-            instituto.cambiaEstadoSensor(codEstacion, codSensor);
+            instituto.cambiaEstadoSensor(codEstacion, codSensor, nuevoEstado);
             System.out.println("Estado del sensor cambiado con éxito.");
         } catch (MeteorologiaException e) {
             System.out.println(e.getMessage());
@@ -349,7 +366,13 @@ public class InterfazUsuario {
         System.out.print("Ingrese código de la comuna: ");
         int codigoComuna = sc.nextInt();
 
-        String[][] estaciones = instituto.listaEstaciones(codigoRegion, codigoComuna);
+        String[][] estaciones;
+        try {
+            estaciones = instituto.listaEstaciones(codigoRegion, codigoComuna);
+        } catch (MeteorologiaException e) {
+            System.out.println("Error: " + e.getMessage());
+            return;
+        }
 
         if (estaciones.length == 0) {
             System.out.println("No existen estaciones registradas para la región y comuna ingresadas.");
@@ -370,7 +393,13 @@ public class InterfazUsuario {
         System.out.print("Ingrese código de la estación: ");
         String codigoEstacion = sc.next();
 
-        String[][] sensores = instituto.listaSensores(codigoEstacion);
+        String[][] sensores;
+        try {
+            sensores = instituto.listaSensores(codigoEstacion);
+        } catch (MeteorologiaException e) {
+            System.out.println("Error: " + e.getMessage());
+            return;
+        }
 
         if (sensores.length == 0) {
             System.out.println("No existen sensores registrados en la estación.");
@@ -406,7 +435,13 @@ public class InterfazUsuario {
         LocalDateTime inicio = LocalDateTime.parse(inicioTexto, formato);
         LocalDateTime fin = LocalDateTime.parse(finTexto, formato);
 
-        String[][] mediciones = instituto.listaMediciones(codEstacion, codSensor, inicio, fin);
+        String[][] mediciones;
+        try {
+            mediciones = instituto.listaMediciones(codEstacion, codSensor, inicio, fin);
+        } catch (MeteorologiaException e) {
+            System.out.println("Error: " + e.getMessage());
+            return;
+        }
 
         if (mediciones.length == 0) {
             System.out.println("No existen mediciones para los datos ingresados.");
