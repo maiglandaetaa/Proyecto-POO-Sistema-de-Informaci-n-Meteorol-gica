@@ -26,7 +26,7 @@ public class PersistenciaObjetos {
         }
     }
 
-    public static Object leerObjeto(String nombreArchivo) throws MeteorologiaException{
+    public static Object leeObjeto(String nombreArchivo) throws MeteorologiaException{
         File archivo = new File(CARPETA + "/" + nombreArchivo);
         if(!archivo.exists()){
             throw new MeteorologiaException("No se encontró el archivo" + nombreArchivo + ".");
