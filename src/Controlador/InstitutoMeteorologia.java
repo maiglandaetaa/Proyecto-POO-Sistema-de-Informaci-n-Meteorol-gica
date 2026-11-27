@@ -146,11 +146,12 @@ public class InstitutoMeteorologia {
             throw new MeteorologiaException("La importación solo puede realizarse cuando no existen datos registrados.");
         }
 
-        List<String[]> registrosRegiones = PersistenciaTexto.leeRegistros("regiones.txt");
-        List<String[]> registrosComunas = PersistenciaTexto.leeRegistros("comunas.txt");
-        List<String[]> registrosEstaciones = PersistenciaTexto.leeRegistros("estaciones.txt");
-        List<String[]> registrosSensores = PersistenciaTexto.leeRegistros("sensores.txt");
-        List<String[]> registrosMediciones = PersistenciaTexto.leeRegistros("mediciones.txt");
+        PersistenciaTexto persistencia = PersistenciaTexto.getInstance();
+        List<String[]> registrosRegiones = persistencia.leeRegistros("regiones.txt");
+        List<String[]> registrosComunas = persistencia.leeRegistros("comunas.txt");
+        List<String[]> registrosEstaciones = persistencia.leeRegistros("estaciones.txt");
+        List<String[]> registrosSensores = persistencia.leeRegistros("sensores.txt");
+        List<String[]> registrosMediciones = persistencia.leeRegistros("mediciones.txt");
 
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm").withResolverStyle(ResolverStyle.STRICT);
 
@@ -218,11 +219,19 @@ public class InstitutoMeteorologia {
     }
 
     public String[][] listaRegiones() {
-            return regiones.stream().map(region -> new String[] {
+        return regiones.stream().map(region -> {
+            int estacionesActivas = Arrays.stream(region.getComunas())
+                    .mapToInt(Comuna::getCantidadEstacionesActivas)
+                    .sum();
+
+            return new String[]{
                     String.valueOf(region.getCodigo()),
-                    region.getNombre(), String.valueOf(region.getComunas().length),
-                    String.valueOf(region.getCantidadEstaciones())
-            }).toArray(String[][]::new);
+                    region.getNombre(),
+                    String.valueOf(region.getComunas().length),
+                    String.valueOf(region.getCantidadEstaciones()),
+                    String.valueOf(estacionesActivas)
+            };
+        }).toArray(String[][]::new);
     }
 
     public String[][] listaComunas() {
@@ -253,12 +262,17 @@ public class InstitutoMeteorologia {
 
         return Arrays.stream(comuna.getEstaciones())
                 .map(estacion -> {
+                    long sensoresActivos = Arrays.stream(estacion.getSensores())
+                            .filter(sensor -> sensor.getEstado() == Estado.ACTIVO)
+                            .count();
 
-                    String[] datos = estacion.toString().split(";");
-                    long sensoresActivos = Arrays.stream(estacion.getSensores()).filter(sensor -> sensor.getEstado() == Estado.ACTIVO).count();
-                    datos[4] = String.valueOf(sensoresActivos);
-                    return datos;
-
+                    return new String[]{
+                            estacion.getCodigo(),
+                            estacion.getNombre(),
+                            estacion.getPosicion(),
+                            estacion.getEstado().toString(),
+                            String.valueOf(sensoresActivos)
+                    };
                 }).toArray(String[][]::new);
     }
 
