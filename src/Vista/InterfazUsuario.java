@@ -8,6 +8,7 @@ import Modelo.TipoSensor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class InterfazUsuario {
@@ -44,7 +45,7 @@ public class InterfazUsuario {
             System.out.println("9. Guardar datos");
             System.out.println("10. Salir");
             System.out.print("Opción: ");
-            opcion = sc.nextInt();
+            opcion = leerEntero("Seleccione una opción: ");
 
 
             switch (opcion) {
@@ -95,8 +96,7 @@ public class InterfazUsuario {
 
     // M: Cambio a público
     public void crearRegion() {
-        System.out.print("Código de la región: ");
-        int codigo = sc.nextInt();
+        int codigo = leerEntero("Código de la región: ");
 
         System.out.print("Nombre de la región: ");
         String nombre = sc.next();
@@ -105,26 +105,24 @@ public class InterfazUsuario {
             instituto.creaRegion(codigo, nombre);
             System.out.println("Región creada con éxito.");
         } catch (MeteorologiaException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
     // M: Cambio a público
     public void crearComuna() {
-        System.out.print("Código de la comuna: ");
-        int codigo = sc.nextInt();
+        int codigo = leerEntero("Código de la comuna: ");
 
         System.out.print("Nombre de la comuna: ");
         String nombre = sc.next();
 
-        System.out.print("Código de la región: ");
-        int codigoRegion = sc.nextInt();
+        int codigoRegion = leerEntero("Código de la región: ");
 
         try {
             instituto.creaComuna(codigo, nombre, codigoRegion);
             System.out.println("Comuna creada con éxito.");
         } catch (MeteorologiaException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -136,26 +134,21 @@ public class InterfazUsuario {
         System.out.print("Nombre de la estación: ");
         String nombre = sc.next();
 
-        System.out.print("Ingrese longitud: ");
-        float lon = sc.nextFloat();
+        float lon = leerFloat("Ingrese longitud: ");
 
-        System.out.print("Ingrese latitud: ");
-        float lat = sc.nextFloat();
+        float lat = leerFloat("Ingrese latitud: ");
 
-        System.out.print("Ingrese altitud: ");
-        float alt = sc.nextFloat();
+        float alt = leerFloat("Ingrese altitud: ");
 
-        System.out.print("Código de la región perteneciente: ");
-        int codRegion = sc.nextInt();
+        int codRegion = leerEntero("Código de la región perteneciente: ");
 
-        System.out.print("Ingrese código de la comuna perteneciente: ");
-        int codComuna = sc.nextInt();
+        int codComuna = leerEntero("Ingrese código de la comuna perteneciente: ");
 
         try {
             instituto.creaEstacion(cod, nombre, lon, lat, alt, codRegion, codComuna);
             System.out.println("Estación creada con éxito.");
         } catch (MeteorologiaException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -179,8 +172,7 @@ public class InterfazUsuario {
         System.out.println("3. Presion");
         System.out.println("4. Viento");
         System.out.println("5. Precipitación");
-        System.out.print("Seleccione: ");
-        int tipo = sc.nextInt();
+        int tipo = leerEntero("Seleccione: ");
 
         TipoSensor sensor;
 
@@ -209,20 +201,15 @@ public class InterfazUsuario {
         System.out.print("Código del sensor: ");
         String codSensor = sc.next();
 
-        System.out.print("Ingrese fecha y hora (dd/MM/yyyy HH:mm): ");
-        String fechaHoraTexto = sc.next() + " " + sc.next();
+        LocalDateTime fechaHora = leerFechaHora("Ingrese fecha y hora (dd/MM/yyyy HH:mm): ");
 
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        LocalDateTime fechaHora = LocalDateTime.parse(fechaHoraTexto, formato);
-
-        System.out.print("Ingrese valor de la medición: ");
-        float valor = sc.nextFloat();
+        float valor = leerFloat("Ingrese valor de la medición: ");
 
         try {
             instituto.registraMedicion(fechaHora, valor, codEstacion, codSensor);
             System.out.println("Medición registrada con éxito.");
         } catch (MeteorologiaException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -304,7 +291,7 @@ public class InterfazUsuario {
             System.out.println("7. Listar alertas de una estación.");
             System.out.println("8. Volver al menú principal.");
             System.out.print("Opción: ");
-            opcion2 = sc.nextInt();
+            opcion2 = leerEntero("Seleccione un listado: ");
 
             switch (opcion2) {
                 case 1 -> {listarRegiones();}
@@ -322,20 +309,20 @@ public class InterfazUsuario {
 
     // M: Cambio a público
     public void listarRegiones() {
-        String[][] regiones = instituto.listaRegiones(); //matriz con datos de las regiones
+        String[][] regiones = instituto.listaRegiones();
 
-        if (regiones.length ==0) {
+        if (regiones.length == 0) {
             System.out.println("No existen regiones registradas.");
-            return;
-        }
+        } else {
+            System.out.println("\nREGIONES");
+            System.out.println("-----------------------------------------------------------------------------------------------");
+            System.out.printf("%-12s %-25s %-15s %-20s %-20s%n",
+                    "Código", "Nombre", "Comunas", "Estaciones", "Est. activas");
+            System.out.println("-----------------------------------------------------------------------------------------------");
 
-        System.out.println("\nREGIONES");
-        System.out.println("-------------------------------------------------------------------------------------");
-        System.out.printf("%-20s %-25s %-25s %-25s%n", "Código", "Nombre", "Comunas", "Estaciones");
-        System.out.println("-------------------------------------------------------------------------------------");
-
-        for (String[] region : regiones) {
-            System.out.printf("%-20s %-25s %-25s %-25s%n", region[0], region[1], region[2], region[3]);
+            for (String[] region : regiones) {
+                System.out.printf("%-12s %-25s %-15s %-20s %-20s%n", region[0], region[1], region[2], region[3], region[4]);
+            }
         }
     }
 
@@ -360,11 +347,9 @@ public class InterfazUsuario {
 
     // M: Cambio a público
     public void listarEstaciones() {
-        System.out.print("Ingrese código de la región: ");
-        int codigoRegion = sc.nextInt();
+        int codigoRegion = leerEntero("Ingrese código de la región: ");
 
-        System.out.print("Ingrese código de la comuna: ");
-        int codigoComuna = sc.nextInt();
+        int codigoComuna = leerEntero("Ingrese código de la comuna: ");
 
         String[][] estaciones;
         try {
@@ -408,7 +393,7 @@ public class InterfazUsuario {
 
         System.out.println("\nSENSORES");
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.printf("%-15s %-20s %-20s %-20s %-20s %-20s %-20s%n", "Código", "Tipo", "Marca", "Modelo", "Unidad", "Modelo", "Última medición");
+        System.out.printf("%-15s %-20s %-20s %-20s %-20s %-20s %-20s%n", "Código", "Tipo", "Marca", "Modelo", "Unidad", "Estado", "Última medición");
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------");
 
         for (String[] sensor : sensores) {
@@ -424,16 +409,8 @@ public class InterfazUsuario {
         System.out.print("Ingrese código del sensor: ");
         String codSensor = sc.next();
 
-        System.out.print("Ingrese fecha y hora de inicio (dd/MM/yyyy HH:mm): ");
-        String inicioTexto = sc.next() + " " + sc.next();
-
-        System.out.print("Ingrese feha y hora de fin (dd//MM/yyyy HH:mm): ");
-        String finTexto = sc.next() + " " + sc.next();
-
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-
-        LocalDateTime inicio = LocalDateTime.parse(inicioTexto, formato);
-        LocalDateTime fin = LocalDateTime.parse(finTexto, formato);
+        LocalDateTime inicio = leerFechaHora("Ingrese fecha y hora de inicio (dd/MM/yyyy HH:mm): ");
+        LocalDateTime fin = leerFechaHora("Ingrese fecha y hora de fin (dd/MM/yyyy HH:mm): ");
 
         String[][] mediciones;
         try {
@@ -445,6 +422,7 @@ public class InterfazUsuario {
 
         if (mediciones.length == 0) {
             System.out.println("No existen mediciones para los datos ingresados.");
+            return;
         }
 
         System.out.println("\nMEDICIONES");
@@ -460,24 +438,14 @@ public class InterfazUsuario {
     // M: Cambio a público
     //Clases nuevas 2do avance
     public void listarResumenMediciones() {
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-
         System.out.print("Ingrese el código de la estación: ");
         String codEstacion = sc.next();
 
         System.out.print("Ingrese el código del sensor: ");
         String codSensor = sc.next();
 
-        sc.nextLine();
-
-        System.out.print("Ingrese la fecha y hora de inicio (dd/MM/aaaa HH:mm): ");
-        String fechaInicio = sc.nextLine();
-
-        System.out.print("Ingrese la fecha y hora de término (dd/MM/aaaa HH:mm): ");
-        String fechaFin = sc.nextLine();
-
-        LocalDateTime inicio = LocalDateTime.parse(fechaInicio, formato);
-        LocalDateTime fin = LocalDateTime.parse(fechaFin, formato);
+        LocalDateTime inicio = leerFechaHora("Ingrese la fecha y hora de inicio (dd/MM/yyyy HH:mm): ");
+        LocalDateTime fin = leerFechaHora("Ingrese la fecha y hora de término (dd/MM/yyyy HH:mm): ");
 
         try {
             String[] resumen = instituto.listaResumenMediciones(codEstacion, codSensor, inicio, fin);
@@ -499,19 +467,14 @@ public class InterfazUsuario {
     }
 
     private void listarAlertas() {
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-
         System.out.print("Ingrese el código de la estación: ");
         String codEstacion = sc.next();
 
-        System.out.print("Ingrese la fecha y hora de inicio (dd/MM/aaaa HH:mm): ");
-        String fechaInicio = sc.nextLine();
+        sc.nextLine();
 
-        System.out.print("Ingrese la fecha y hora de término (dd/MM/aaaa HH:mm): ");
-        String fechaFin = sc.nextLine();
 
-        LocalDateTime inicio = LocalDateTime.parse(fechaInicio, formato);
-        LocalDateTime fin = LocalDateTime.parse(fechaFin, formato);
+        LocalDateTime inicio = leerFechaHora("Ingrese la fecha y hora de inicio (dd/MM/yyyy HH:mm): ");
+        LocalDateTime fin = leerFechaHora("Ingrese la fecha y hora de término (dd/MM/yyyy HH:mm): ");
 
         try {
             String[][] alertas = instituto.listaAlertas(codEstacion, inicio, fin);
@@ -533,6 +496,46 @@ public class InterfazUsuario {
             }
         } catch (MeteorologiaException e) {
             System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    // Marce: Métodos auxiliares para validacion de datos
+    private int leerEntero(String mensaje) {
+        while (true) {
+            System.out.print(mensaje);
+            String entrada = sc.next();
+
+            try {
+                return Integer.parseInt(entrada);
+            } catch (NumberFormatException e) {
+                System.out.println("Error: Debe ingresar un número entero.");
+            }
+        }
+    }
+    private float leerFloat(String mensaje) {
+        while (true) {
+            System.out.print(mensaje);
+            String entrada = sc.next();
+
+            try {
+                return Float.parseFloat(entrada);
+            } catch (NumberFormatException e) {
+                System.out.println("Error: Debe ingresar un número válido.");
+            }
+        }
+    }
+    private LocalDateTime leerFechaHora(String mensaje) {
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+        while (true) {
+            System.out.print(mensaje);
+            String fecha = sc.next() + " " + sc.next();
+
+            try {
+                return LocalDateTime.parse(fecha, formato);
+            } catch (DateTimeParseException e) {
+                System.out.println("Error: Fecha u hora no válida. Utilice dd/MM/yyyy HH:mm.");
+            }
         }
     }
 }
