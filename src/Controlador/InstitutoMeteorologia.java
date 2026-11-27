@@ -146,17 +146,17 @@ public class InstitutoMeteorologia {
             throw new MeteorologiaException("La importación solo puede realizarse cuando no existen datos registrados.");
         }
 
-        PersistenciaTexto persistencia = PersistenciaTexto.getInstance();
-        List<String[]> registrosRegiones = persistencia.leeRegistros("regiones.txt");
-        List<String[]> registrosComunas = persistencia.leeRegistros("comunas.txt");
-        List<String[]> registrosEstaciones = persistencia.leeRegistros("estaciones.txt");
-        List<String[]> registrosSensores = persistencia.leeRegistros("sensores.txt");
-        List<String[]> registrosMediciones = persistencia.leeRegistros("mediciones.txt");
-
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm").withResolverStyle(ResolverStyle.STRICT);
-
         List<String[]> sensoresActivos = new ArrayList<>();
         try {
+            PersistenciaTexto persistencia = PersistenciaTexto.getInstance();
+            List<String[]> registrosRegiones = persistencia.leeRegistros("regiones.txt");
+            List<String[]> registrosComunas = persistencia.leeRegistros("comunas.txt");
+            List<String[]> registrosEstaciones = persistencia.leeRegistros("estaciones.txt");
+            List<String[]> registrosSensores = persistencia.leeRegistros("sensores.txt");
+            List<String[]> registrosMediciones = persistencia.leeRegistros("mediciones.txt");
+
+            DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm").withResolverStyle(ResolverStyle.STRICT);
+
             for (String[] registro : registrosRegiones) {
                 int codigo = Integer.parseInt(registro[0]);
                 String nombre = registro[1];

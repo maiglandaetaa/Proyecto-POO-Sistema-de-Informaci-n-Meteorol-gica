@@ -44,9 +44,7 @@ public class InterfazUsuario {
             System.out.println("8. Cargar datos");
             System.out.println("9. Guardar datos");
             System.out.println("10. Salir");
-            System.out.print("Opción: ");
-            opcion = leerEntero("Seleccione una opción: ");
-
+            opcion = leerEntero("Opción: ");
 
             switch (opcion) {
                 case 1 -> {
@@ -331,20 +329,18 @@ public class InterfazUsuario {
     public void listarComunas() {
         String[][] comunas = instituto.listaComunas();
         if (comunas.length == 0) {
-            System.out.println("No existen comunas registradas");
+            System.out.println("No existen comunas registradas.");
             return;
         }
 
-        // Marce: Faltaba región
         System.out.println("\nCOMUNAS");
         System.out.println("---------------------------------------------------------------------------------------------------------------");
-        System.out.printf("%-20s %-25s %-25s %-25s %-25s%n", "Código", "Nombre", "Estaciones", "Estaciones activas", "Región");
+        System.out.printf("%-20s %-25s %-25s %-25s %-25s%n", "Código", "Nombre", "Región", "Estaciones", "Estaciones activas");
         System.out.println("---------------------------------------------------------------------------------------------------------------");
 
         for (String[] comuna : comunas) {
             System.out.printf("%-20s %-25s %-25s %-25s %-25s%n", comuna[0], comuna[1], comuna[2], comuna[3], comuna[4]);
         }
-
     }
 
     // M: Cambio a público
