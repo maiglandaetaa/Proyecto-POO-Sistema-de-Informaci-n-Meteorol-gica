@@ -22,7 +22,7 @@ public class PersistenciaTexto {
         return instancia;
     }
 
-    public static List<String[]> leeRegistros(String nombreArchivo) throws MeteorologiaException{
+    public List<String[]> leeRegistros(String nombreArchivo) throws MeteorologiaException{
         File archivo = new File("datos/" + nombreArchivo);
         if (!archivo.exists()){
             throw new MeteorologiaException("No se encontró el archivo " + nombreArchivo + ".");
