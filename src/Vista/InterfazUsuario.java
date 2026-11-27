@@ -189,7 +189,7 @@ public class InterfazUsuario {
             instituto.instalaSensor(cod, marca, modelo, sensor, codEstacion);
             System.out.println("Sensor creado con exito.");
         } catch (MeteorologiaException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -200,6 +200,8 @@ public class InterfazUsuario {
 
         System.out.print("Código del sensor: ");
         String codSensor = sc.next();
+
+        sc.nextLine();
 
         LocalDateTime fechaHora = leerFechaHora("Ingrese fecha y hora (dd/MM/yyyy HH:mm): ");
 
@@ -223,8 +225,7 @@ public class InterfazUsuario {
         System.out.println("Seleccione el nuevo estado:");
         System.out.println("1. ACTIVO");
         System.out.println("2. INACTIVO");
-        System.out.print("Opción: ");
-        int opcion = sc.nextInt();
+        int opcion = leerEntero("Opción: ");
 
         Estado nuevoEstado;
         if (opcion == 1) {
@@ -240,7 +241,7 @@ public class InterfazUsuario {
             instituto.cambiaEstadoSensor(codEstacion, codSensor, nuevoEstado);
             System.out.println("Estado del sensor cambiado con éxito.");
         } catch (MeteorologiaException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -249,7 +250,7 @@ public class InterfazUsuario {
             instituto.cargaDatos();
             System.out.println("Datos cargados correctamente.");
         } catch (MeteorologiaException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -258,7 +259,7 @@ public class InterfazUsuario {
             instituto.guardaDatos();
             System.out.println("Datos guardados correctamente.");
         } catch (MeteorologiaException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -331,6 +332,7 @@ public class InterfazUsuario {
         String[][] comunas = instituto.listaComunas();
         if (comunas.length == 0) {
             System.out.println("No existen comunas registradas");
+            return;
         }
 
         // Marce: Faltaba región
@@ -361,6 +363,7 @@ public class InterfazUsuario {
 
         if (estaciones.length == 0) {
             System.out.println("No existen estaciones registradas para la región y comuna ingresadas.");
+            return;
         }
 
         System.out.println("\nESTACIONES METEOROLÓGICAS");
