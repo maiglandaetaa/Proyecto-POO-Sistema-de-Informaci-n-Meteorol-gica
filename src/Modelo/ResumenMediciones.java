@@ -6,7 +6,7 @@ import Controlador.MeteorologiaException;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class ResumenMediciones {
+public final class ResumenMediciones {
     private final int cantidad;
     private final float promedio;
     private final Medicion minima, maxima;
