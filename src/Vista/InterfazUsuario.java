@@ -408,6 +408,7 @@ public class InterfazUsuario {
 
         System.out.print("Ingrese código del sensor: ");
         String codSensor = sc.next();
+        sc.nextLine();
 
         LocalDateTime inicio = leerFechaHora("Ingrese fecha y hora de inicio (dd/MM/yyyy HH:mm): ");
         LocalDateTime fin = leerFechaHora("Ingrese fecha y hora de fin (dd/MM/yyyy HH:mm): ");
@@ -443,6 +444,7 @@ public class InterfazUsuario {
 
         System.out.print("Ingrese el código del sensor: ");
         String codSensor = sc.next();
+        sc.nextLine();
 
         LocalDateTime inicio = leerFechaHora("Ingrese la fecha y hora de inicio (dd/MM/yyyy HH:mm): ");
         LocalDateTime fin = leerFechaHora("Ingrese la fecha y hora de término (dd/MM/yyyy HH:mm): ");
@@ -471,7 +473,6 @@ public class InterfazUsuario {
         String codEstacion = sc.next();
 
         sc.nextLine();
-
 
         LocalDateTime inicio = leerFechaHora("Ingrese la fecha y hora de inicio (dd/MM/yyyy HH:mm): ");
         LocalDateTime fin = leerFechaHora("Ingrese la fecha y hora de término (dd/MM/yyyy HH:mm): ");
@@ -529,7 +530,7 @@ public class InterfazUsuario {
 
         while (true) {
             System.out.print(mensaje);
-            String fecha = sc.next() + " " + sc.next();
+            String fecha = sc.nextLine();
 
             try {
                 return LocalDateTime.parse(fecha, formato);
