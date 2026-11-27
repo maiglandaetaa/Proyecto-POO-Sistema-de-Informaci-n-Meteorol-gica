@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-public class Medicion implements Serializable {
+public final class Medicion implements Serializable {
     private final LocalDateTime fechaHora;
     private final float valor;
     private static final long serialVersionUID = 1L;
