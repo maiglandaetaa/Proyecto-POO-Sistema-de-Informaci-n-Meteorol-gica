@@ -4,7 +4,7 @@ package Modelo;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class AlertaMeteorologica implements Serializable {
+public final class AlertaMeteorologica implements Serializable {
     final private LocalDateTime fechaHora;
     final private float valor;
     final private NivelAlerta nivel;
